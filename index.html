@@ -39,8 +39,8 @@ header h1{font-size:14px;font-weight:500;letter-spacing:.02em}
 .statsbar{background:#fff;border-bottom:1px solid var(--border);padding:6px 20px;display:flex;gap:12px;align-items:center;flex-shrink:0}
 .stat-chip{font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500;display:flex;align-items:center;gap:5px;cursor:default}
 .stat-chip .count{font-weight:700}
-.s-email{background:var(--bxl);color:var(--bxm)}
-.s-todo{background:var(--redl);color:var(--red)}
+.s-email{background:#DBEAFE;color:#1E40AF}
+.s-todo{background:#FFF7ED;color:#C2410C}
 .s-decision{background:var(--beige);color:var(--gray)}
 .s-key{background:var(--bx);color:#fff}
 .s-ok{background:var(--greenl);color:var(--green)}
@@ -120,7 +120,7 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .add-section-row button:hover{background:var(--bxl);border-style:solid}
 
 /* RIGHT PANEL */
-.right{width:420px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.right{width:700px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
 .ep-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:8px;padding:40px;text-align:center}
 .ep-icon{font-size:28px;opacity:.2}
 .ep-form{display:none;flex-direction:column;height:100%}
@@ -138,11 +138,12 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sdiv{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding-top:13px;margin-bottom:9px;border-top:1px solid var(--border)}
 .ep-foot{padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:#fff;align-items:center}
-.ep-vertabs{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:12px}
-.ep-vertab{flex:1;font-size:12px;padding:6px 10px;background:transparent;border:none;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;text-align:center}
-.ep-vertab.active{background:var(--bx);color:#fff;font-weight:600}
-.ep-vertab:hover:not(.active){background:var(--beige)}
-.ep-ver-sub{font-size:10px;font-weight:400;opacity:.75;margin-left:3px}
+.ep-vcols{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.ep-vcol{flex:1;padding:10px 13px;min-width:0;display:flex;flex-direction:column;gap:0}
+.ep-vcol+.ep-vcol{border-left:1px solid var(--border);background:#FAFAF8}
+.ep-vcol-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.ep-vcol-v1{color:#1D4ED8}.ep-vcol-v2{color:#6B7280}
+.ep-ver-sub{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);margin-left:2px}
 .bsave{background:var(--bx);color:#fff;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;transition:background .15s}
 .bsave:hover{background:var(--bxd)}
 .bcancel{background:none;color:var(--muted);padding:7px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-family:inherit}
@@ -408,7 +409,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
           </div>
           <div class="field"><label>Statut</label>
             <select id="f-type" onchange="liveUp()">
-              <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+              <option value="email">🔵 À personnaliser</option><option value="todo">🟠 À créer</option>
               <option value="decision">⚪ À investiguer</option><option value="key">⬛ Étape clé</option>
               <option value="ok">✅ Garder tel quel</option>
             </select>
@@ -418,17 +419,17 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
             <div class="field"><label>Destinataire</label><input id="f-to"></div>
             <div class="field"><label>Nom Marianatek</label><input id="f-mt" style="font-family:monospace;font-size:11px"></div>
           </div>
-          <div class="ep-vertabs">
-            <button class="ep-vertab active" id="ep-v1-tab" onclick="epSwitchVer('v1')">V1<span class="ep-ver-sub">actuelle</span></button>
-            <button class="ep-vertab" id="ep-v2-tab" onclick="epSwitchVer('v2')">V2<span class="ep-ver-sub">nouvelle</span></button>
-          </div>
-          <div id="ep-v1-pane">
-            <div class="field"><label>Objet</label><input id="f-v1-subj" placeholder="Objet de l'email…"></div>
-            <div class="field"><label>Corps</label><textarea id="f-v1-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
-          </div>
-          <div id="ep-v2-pane" style="display:none">
-            <div class="field"><label>Objet</label><input id="f-v2-subj" placeholder="Objet de l'email…"></div>
-            <div class="field"><label>Corps</label><textarea id="f-v2-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
+          <div class="ep-vcols">
+            <div class="ep-vcol">
+              <div class="ep-vcol-hd ep-vcol-v1">V1 <span class="ep-ver-sub">version actuelle</span></div>
+              <div class="field" style="margin-bottom:6px"><label>Objet</label><input id="f-v1-subj" placeholder="Objet de l'email…"></div>
+              <div class="field"><label>Corps</label><textarea id="f-v1-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
+            </div>
+            <div class="ep-vcol">
+              <div class="ep-vcol-hd ep-vcol-v2">V2 <span class="ep-ver-sub">nouvelle version</span></div>
+              <div class="field" style="margin-bottom:6px"><label>Objet</label><input id="f-v2-subj" placeholder="Objet de l'email…"></div>
+              <div class="field"><label>Corps</label><textarea id="f-v2-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
+            </div>
           </div>
           <div class="sdiv">Notes</div>
           <div class="field"><textarea id="f-notes" style="min-height:50px"></textarea></div>
@@ -525,7 +526,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
       </div>
       <div class="field"><label>Statut</label>
         <select id="m-type">
-          <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+          <option value="email">🔵 À personnaliser</option><option value="todo">🟠 À créer</option>
           <option value="decision">⚪ À investiguer</option><option value="key">⬛ Étape clé</option>
           <option value="ok">✅ Garder tel quel</option>
         </select>
@@ -560,7 +561,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
       <div class="field"><label>Sous-titre</label><input id="add-t2" placeholder="ex: New Registration"></div>
       <div class="field"><label>Type</label>
         <select id="add-type">
-          <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+          <option value="email">🔵 À personnaliser</option><option value="todo">🟠 À créer</option>
           <option value="decision">⚪ Décision / branchement</option><option value="key">⬛ Étape clé</option>
           <option value="ok">✅ Garder tel quel</option>
         </select>
@@ -1321,7 +1322,6 @@ function selectRow(id){
   document.getElementById('f-v1-body').value=r.v1.content||'';
   document.getElementById('f-v2-subj').value=r.v2.subject||'';
   document.getElementById('f-v2-body').value=r.v2.content||'';
-  epSwitchVer('v1');
   render();
 }
 function liveUp(){
