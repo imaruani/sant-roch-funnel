@@ -896,14 +896,35 @@ const TREES=[
     {x:44,y:554,w:160,h:36,type:'decision',t1:'Carte expirée',t2:'Sortie propre'},
   ],initEdges:[[0,1,null],[1,2,null],[2,3,null],[3,4,'Oui'],[3,5,'Non'],[5,6,null],[6,7,'Non'],[6,4,'Oui →'],[7,8,null],[8,9,'Oui — expirée']]},
   {nodes:[
+    // ── Emails techniques ──
     {x:190,y:20,w:280,h:40,type:'decision',t1:'Emails techniques',t2:'automatiques ou manuels'},
-    {x:20,y:160,w:96,h:50,type:'email',t1:'Password Reset',t2:'À habiller'},
-    {x:128,y:160,w:96,h:50,type:'email',t1:'Autopay Failure',t2:'CTA : màj CB'},
-    {x:236,y:160,w:96,h:50,type:'todo',t1:'Customer Waiver',t2:'À créer'},
-    {x:344,y:160,w:96,h:50,type:'ok',t1:'Vat Invoice',t2:'Garder'},
-    {x:452,y:160,w:96,h:50,type:'ok',t1:'Chargeback',t2:'Garder'},
-    {x:560,y:160,w:96,h:50,type:'email',t1:'Customer Comm.',t2:'Manuel'},
-  ],initEdges:[[0,1,null],[0,2,null],[0,3,null],[0,4,null],[0,5,null],[0,6,null]]},
+    {x:20,y:100,w:100,h:50,type:'email',t1:'Password Reset',t2:'À habiller'},
+    {x:132,y:100,w:100,h:50,type:'email',t1:'Autopay Failure',t2:'CTA : màj CB'},
+    {x:244,y:100,w:100,h:50,type:'todo',t1:'Customer Waiver',t2:'À créer'},
+    {x:356,y:100,w:100,h:50,type:'ok',t1:'Vat Invoice',t2:'Garder'},
+    {x:468,y:100,w:110,h:50,type:'ok',t1:'Chargeback',t2:'Garder'},
+    {x:580,y:100,w:100,h:50,type:'email',t1:'Customer Comm.',t2:'Manuel'},
+    // ── Others ──
+    {x:190,y:200,w:280,h:40,type:'key',t1:'Others',t2:'Non mappés dans le funnel'},
+    {x:10, y:280,w:155,h:50,type:'email',t1:'Purchase Agreement Receipt',       t2:'Purchase Agreement Receipt'},
+    {x:175,y:280,w:155,h:50,type:'email',t1:'Reservation Cancellation',         t2:'Reservation Cancellation'},
+    {x:340,y:280,w:155,h:50,type:'ok',  t1:'Appointment Reminder - Instructor', t2:'Appointment Reminder - Instructor'},
+    {x:505,y:280,w:155,h:50,type:'ok',  t1:'Chargeback',                         t2:'Chargeback'},
+    {x:10, y:345,w:155,h:50,type:'ok',  t1:'Studio Chargeback Win Notification',t2:'Studio Chargeback Win Notification'},
+    {x:175,y:345,w:155,h:50,type:'ok',  t1:'Live Stream Invite',                 t2:'Live Stream Invite'},
+    {x:340,y:345,w:155,h:50,type:'ok',  t1:'Appointment Cancellation - Instructor',t2:'Appointment Cancellation - Instructor'},
+    {x:505,y:345,w:155,h:50,type:'ok',  t1:'Appointment Recurring Confirmation - Instructor',t2:'Appointment Recurring Confirmation - Instructor'},
+    {x:10, y:410,w:155,h:50,type:'ok',  t1:'Appointment Recurring Confirmation - Customer',t2:'Appointment Recurring Confirmation - Customer'},
+    {x:175,y:410,w:155,h:50,type:'ok',  t1:'Vat Invoice Email / On le fait manuellement',t2:'Vat Invoice Email / On le fait manuellement'},
+    {x:340,y:410,w:155,h:50,type:'ok',  t1:'Appointment Confirmation - Instructor',t2:'Appointment Confirmation - Instructor'},
+    {x:505,y:410,w:155,h:50,type:'ok',  t1:'Appointment Time Change - Instructor',t2:'Appointment Time Change - Instructor'},
+    {x:175,y:475,w:155,h:50,type:'ok',  t1:'Appointment Time Change - Customer', t2:'Appointment Time Change - Customer'},
+    {x:340,y:475,w:155,h:50,type:'ok',  t1:'Studio Chargeback Loss Notification',t2:'Studio Chargeback Loss Notification'},
+  ],initEdges:[
+    [0,1,null],[0,2,null],[0,3,null],[0,4,null],[0,5,null],[0,6,null],
+    [7,8,null],[7,9,null],[7,10,null],[7,11,null],[7,12,null],[7,13,null],
+    [7,14,null],[7,15,null],[7,16,null],[7,17,null],[7,18,null],[7,19,null],[7,20,null],[7,21,null],
+  ]},
 ];
 
 /* ═══════════════════════════════════════
