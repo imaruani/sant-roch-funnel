@@ -123,7 +123,9 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .add-section-row button:hover{background:var(--bxl);border-style:solid}
 
 /* RIGHT PANEL */
-.right{width:700px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.right{width:700px;flex-shrink:0;background:#fff;display:flex;flex-direction:column;overflow:hidden}
+#table-resize-handle{width:5px;flex-shrink:0;cursor:ew-resize;background:transparent;border-left:1px solid var(--border);transition:background .15s;z-index:2}
+#table-resize-handle:hover,#table-resize-handle.dragging{background:var(--bxm);opacity:.35;border-color:transparent}
 .ep-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:8px;padding:40px;text-align:center}
 .ep-icon{font-size:28px;opacity:.2}
 .ep-form{display:none;flex-direction:column;height:100%}
@@ -363,6 +365,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
   <!-- TABLE VIEW -->
   <div id="layout-table" style="display:flex;flex:1;overflow:hidden;min-width:0">
     <div class="left" id="left"></div>
+    <div id="table-resize-handle"></div>
     <div class="right" id="right">
       <div class="ep-empty" id="ep-empty"><div class="ep-icon">✏️</div><div>Cliquez sur une ligne<br>pour modifier</div></div>
       <div class="ep-form" id="ep-form">
@@ -1741,6 +1744,33 @@ function closeTep(){
   tepRow=null;tepNode=null;
   requestAnimationFrame(()=>fitScreen());
 }
+
+// Resize panneau tableau (gauche ↔ droite)
+(function(){
+  const handle=document.getElementById('table-resize-handle');
+  const panel=document.getElementById('right');
+  if(!handle||!panel)return;
+  let resizing=false,startX=0,startW=0;
+  handle.addEventListener('mousedown',(e)=>{
+    resizing=true;startX=e.clientX;startW=panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor='ew-resize';
+    document.body.style.userSelect='none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',(e)=>{
+    if(!resizing)return;
+    const delta=startX-e.clientX;
+    panel.style.width=Math.max(320,Math.min(1200,startW+delta))+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!resizing)return;
+    resizing=false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
+  });
+})();
 
 // Resize handle + diff input listeners (script est en fin de body, DOM déjà prêt)
 (function(){
