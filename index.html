@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sant Roch — Funnel v6</title>
+<style>
+:root{
+  --bx:#6C1412;--bxl:#FAECE7;--bxm:#993C1D;--bxd:#4A1B0C;
+  --cream:#F9F6F1;--beige:#F1EFE8;--gray:#888780;--border:rgba(0,0,0,.09);
+  --text:#2C2C2A;--muted:#6B6A66;
+  --red:#A32D2D;--redl:#FCEBEB;--green:#3B6D11;--greenl:#EAF3DE;--amber:#92580A;--amberl:#FEF3C7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px}
+
+/* HEADER */
+header{background:var(--bx);color:#fff;padding:0 20px;height:48px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+header h1{font-size:14px;font-weight:500;letter-spacing:.02em}
+.hbtns{display:flex;gap:6px;align-items:center}
+.hbtn{font-size:12px;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-weight:500;transition:background .15s}
+.hg{background:rgba(255,255,255,.14);color:#fff}.hg:hover{background:rgba(255,255,255,.24)}
+.hw{background:#fff;color:var(--bx)}.hw:hover{background:var(--bxl)}
+.saved{font-size:11px;opacity:.4;margin-right:4px}
+
+/* TOPBAR */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:stretch;flex-shrink:0;height:44px}
+.ttab{font-size:13px;padding:0 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;white-space:nowrap;display:flex;align-items:center;transition:color .15s}
+.ttab.active{color:var(--bx);border-bottom-color:var(--bx);font-weight:500}
+.ttab:hover:not(.active){color:var(--text)}
+.tab-add{color:var(--muted);font-size:17px;padding:0 10px;cursor:pointer;background:none;border:none;align-self:center;line-height:1;opacity:.5}
+.tab-add:hover{opacity:1}
+.vtabs{margin-left:auto;display:flex;gap:4px;align-items:center}
+.vtab{font-size:12px;padding:4px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .15s}
+.vtab.active{background:var(--bx);color:#fff;border-color:var(--bx)}
+.vtab:hover:not(.active){background:var(--beige)}
+
+/* STATS BAR */
+.statsbar{background:#fff;border-bottom:1px solid var(--border);padding:6px 20px;display:flex;gap:12px;align-items:center;flex-shrink:0}
+.stat-chip{font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500;display:flex;align-items:center;gap:5px;cursor:default}
+.stat-chip .count{font-weight:700}
+.s-email{background:var(--bxl);color:var(--bxm)}
+.s-todo{background:var(--redl);color:var(--red)}
+.s-decision{background:var(--beige);color:var(--gray)}
+.s-key{background:var(--bx);color:#fff}
+.s-ok{background:var(--greenl);color:var(--green)}
+.stat-total{font-size:11px;color:var(--muted);margin-left:auto}
+
+/* SEARCH BAR */
+.searchbar{padding:8px 20px 0;flex-shrink:0;display:none}
+.searchbar.show{display:block}
+.search-input-wrap{position:relative}
+.search-input-wrap input{width:100%;font-size:13px;padding:7px 10px 7px 32px;border:1px solid var(--border);border-radius:7px;background:#fff;font-family:inherit;outline:none;transition:border-color .15s}
+.search-input-wrap input:focus{border-color:var(--bxm)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);background:none;border:none;cursor:pointer;font-size:16px;line-height:1;display:none}
+
+/* LAYOUT */
+.layout{flex:1;display:flex;overflow:hidden;min-width:0}
+.left{flex:1;overflow-y:auto;overflow-x:auto;padding:16px 20px;min-width:0;background:var(--cream)}
+
+/* SECTIONS */
+.section-wrap{margin-bottom:24px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.section-hdr{background:var(--beige);padding:8px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+.section-hdr:hover{background:#E9E7E0}
+.sec-arrow{font-size:11px;color:var(--muted);transition:transform .2s;display:inline-block}
+.sec-arrow.open{transform:rotate(90deg)}
+.sec-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.sec-tag{font-size:10px;background:#fff;color:var(--bxm);padding:2px 8px;border-radius:10px;font-weight:500;border:1px solid var(--bxl)}
+.sec-count{font-size:10px;color:var(--muted);margin-left:4px}
+.sec-add-btn{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:5px;border:1.5px dashed rgba(108,20,18,.25);background:transparent;color:var(--bxm);cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s}
+.sec-add-btn:hover{background:var(--bxl);border-style:solid}
+.section-body{display:block}
+.section-body.collapsed{display:none}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#fff;color:var(--muted);padding:8px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:1}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover td{background:#F5F3EE}
+tbody tr.sel td{background:var(--bxl)!important}
+tbody tr.dup-row td{background:#FFFBEB}
+tbody tr.drag-over td{background:#F0EBF9;outline:2px solid #8B5CF6;outline-offset:-1px}
+tbody tr.drag-ghost{opacity:.4}
+td{padding:9px 14px;vertical-align:top;line-height:1.55;background:#fff}
+.td-drag{width:20px;padding:9px 4px 9px 14px;cursor:grab;color:#ccc;font-size:14px;user-select:none}
+.td-drag:hover{color:var(--muted)}
+.td-del{width:28px;padding:0 4px;text-align:center;position:sticky;right:0;background:#fff;box-shadow:-3px 0 6px rgba(0,0,0,.04)}
+tbody tr:hover .td-del{background:#F5F3EE}
+tbody tr.sel .td-del{background:var(--bxl)}
+.btn-row-del{background:none;border:none;cursor:pointer;font-size:13px;opacity:0;transition:opacity .15s;padding:4px 5px;border-radius:4px;color:var(--red);line-height:1}
+.btn-row-del:hover{background:var(--redl)}
+tbody tr:hover .btn-row-del{opacity:.55}
+tbody tr:hover .btn-row-del:hover{opacity:1}
+.cn{font-weight:500;color:var(--text);min-width:150px}
+.cmt{font-family:monospace;font-size:11px;color:var(--muted);min-width:130px}
+.cto{color:var(--muted);white-space:nowrap;min-width:90px}
+.csub{color:var(--text);min-width:150px}
+.ccont{color:var(--muted);min-width:160px;max-width:240px}
+.cnotes{color:var(--red);font-size:11px;min-width:110px;max-width:180px}
+.empty{color:#ccc;font-style:italic}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap}
+.b-e{background:#DBEAFE;color:#1D4ED8}
+.b-t{background:#FFF7ED;color:#C2410C}
+.b-d{background:var(--beige);color:var(--gray)}
+.b-k{background:var(--bx);color:#fff}
+.b-o{background:var(--greenl);color:var(--green)}
+.dup-flag{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--amberl);color:var(--amber);margin-left:5px;font-weight:500}
+.dup-banner{background:var(--amberl);border:1px solid #F59E0B;border-radius:7px;padding:9px 14px;margin-bottom:14px;font-size:12px;color:var(--amber)}
+.split-wrap{display:flex;gap:20px;align-items:start;flex-wrap:wrap}
+.split-panel{border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
+.split-header{padding:9px 16px;font-size:12px;font-weight:600;color:#fff}
+.split-panel .tbl-wrap{border:none}
+
+/* Add section row */
+.add-section-row{padding:12px 14px;text-align:center;border-top:1px dashed var(--border);margin-top:8px}
+.add-section-row button{font-size:12px;padding:5px 14px;border-radius:6px;border:1.5px dashed rgba(108,20,18,.25);background:transparent;color:var(--bxm);cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s}
+.add-section-row button:hover{background:var(--bxl);border-style:solid}
+
+/* RIGHT PANEL */
+.right{width:340px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.ep-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:8px;padding:40px;text-align:center}
+.ep-icon{font-size:28px;opacity:.2}
+.ep-form{display:none;flex-direction:column;height:100%}
+.ep-head{padding:15px 18px 11px;border-bottom:1px solid var(--border);position:relative;background:#fff}
+.ep-badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;display:inline-block;margin-bottom:5px}
+.ep-title{font-size:14px;font-weight:500;line-height:1.3;padding-right:22px}
+.ep-close{position:absolute;top:12px;right:14px;font-size:20px;cursor:pointer;background:none;border:none;color:var(--gray);line-height:1;opacity:.5}
+.ep-close:hover{opacity:1}
+.ep-body{padding:13px 18px;flex:1;overflow-y:auto}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.field input,.field textarea,.field select{width:100%;font-size:13px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;background:var(--beige);color:var(--text);font-family:inherit;transition:border-color .15s,background .15s}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--bxm);background:#fff}
+.field textarea{resize:vertical;min-height:70px;line-height:1.6}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sdiv{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding-top:13px;margin-bottom:9px;border-top:1px solid var(--border)}
+.ep-foot{padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:#fff;align-items:center}
+.bsave{background:var(--bx);color:#fff;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;transition:background .15s}
+.bsave:hover{background:var(--bxd)}
+.bcancel{background:none;color:var(--muted);padding:7px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-family:inherit}
+.bcancel:hover{background:var(--beige)}
+.bdanger{background:none;color:var(--red);padding:7px 10px;border-radius:6px;border:1px solid var(--redl);cursor:pointer;font-size:13px;font-family:inherit;margin-left:auto}
+.bdanger:hover{background:var(--redl)}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:12px;width:500px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-head{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.modal-badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;display:inline-block;margin-bottom:5px}
+.modal-title{font-size:15px;font-weight:500;line-height:1.3}
+.modal-close{font-size:20px;cursor:pointer;background:none;border:none;color:var(--gray);line-height:1;opacity:.5;flex-shrink:0}
+.modal-close:hover{opacity:1}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.modal-foot{padding:11px 20px;border-top:1px solid var(--border);display:flex;gap:8px}
+
+/* TREE */
+#layout-tree{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
+.tree-toolbar{background:#fff;border-bottom:1px solid var(--border);padding:7px 14px;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.tlabel{font-size:11px;color:var(--muted);font-weight:600;margin-right:2px;white-space:nowrap}
+.tbtn{font-size:12px;padding:5px 11px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s;white-space:nowrap}
+.tbtn:hover{background:var(--beige)}
+.tbtn.danger{color:var(--red);border-color:var(--redl)}.tbtn.danger:hover{background:var(--redl)}
+.tbtn.primary{background:var(--bx);color:#fff;border-color:var(--bx)}.tbtn.primary:hover{background:var(--bxd)}
+.tbtn:disabled{opacity:.4;cursor:not-allowed}
+.tbtn.active{background:var(--bxl);color:var(--bxm);border-color:var(--bxm)}
+.tree-hint{font-size:10.5px;color:var(--muted);margin-left:auto;text-align:right}
+
+/* TREE CANVAS */
+/* tree-canvas-wrap defined in TREE MAIN LAYOUT above */
+.node-g{cursor:grab}.node-g:active{cursor:grabbing}
+
+/* ZOOM CONTROLS */
+.zoom-controls{position:absolute;bottom:16px;right:16px;display:flex;gap:4px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.zbtn{font-size:13px;width:28px;height:28px;border:none;background:transparent;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--text);font-family:inherit}
+.zbtn:hover{background:var(--beige)}
+.zbtn.fit{font-size:11px;width:auto;padding:0 8px;color:var(--bxm);font-weight:600}
+#zoom-display{font-size:11px;font-weight:600;color:var(--muted);padding:0 4px;min-width:40px;text-align:center;line-height:28px}
+
+/* CONTEXT MENU */
+.ctx-menu{position:fixed;background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px 0;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:170px;display:none}
+.ctx-menu.open{display:block}
+.ctx-item{padding:8px 14px;font-size:13px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px}
+.ctx-item:hover{background:var(--beige)}
+.ctx-item.danger{color:var(--red)}.ctx-item.danger:hover{background:var(--redl)}
+.ctx-sep{height:1px;background:var(--border);margin:3px 0}
+
+/* EDGE LABEL */
+.elp{position:fixed;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;z-index:601;box-shadow:0 6px 20px rgba(0,0,0,.15);display:none;flex-direction:column;gap:8px;min-width:190px}
+.elp.open{display:flex}
+.elp label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.elp input{font-size:13px;padding:6px 9px;border:1px solid var(--border);border-radius:5px;font-family:inherit;outline:none;width:100%}
+.elp input:focus{border-color:var(--bxm)}
+.elp-btns{display:flex;gap:6px}
+.elp-btns button{font-size:12px;padding:4px 10px;border-radius:5px;border:none;cursor:pointer;font-family:inherit}
+.elp-ok{background:var(--bx);color:#fff}
+.elp-cancel{background:var(--beige);color:var(--text)}
+
+/* NO RESULTS */
+.no-results{padding:28px;text-align:center;color:var(--muted);font-size:13px;background:#fff}
+
+/* HELP BANNER */
+.help-bar{background:#fff;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden;transition:max-height .25s ease}
+.help-bar.closed{max-height:36px}
+.help-bar.open{max-height:400px}
+.help-toggle{display:flex;align-items:center;gap:8px;padding:0 20px;height:36px;cursor:pointer;user-select:none}
+.help-toggle:hover{background:var(--beige)}
+.help-icon{font-size:13px}
+.help-label{font-size:12px;font-weight:600;color:var(--bxm)}
+.help-arrow{font-size:10px;color:var(--muted);margin-left:auto;transition:transform .2s}
+.help-bar.open .help-arrow{transform:rotate(180deg)}
+.help-body{padding:12px 20px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.help-section{display:flex;flex-direction:column;gap:5px}
+.help-section h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px}
+.help-item{font-size:12px;color:var(--text);display:flex;gap:7px;align-items:baseline;line-height:1.45}
+.help-key{font-size:10px;background:var(--beige);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--muted);white-space:nowrap;flex-shrink:0}
+
+/* TREE MAIN LAYOUT */
+.tree-main{display:flex;flex:1;overflow:hidden;min-height:0}
+#tree-canvas-wrap{flex:1;min-width:0;overflow:hidden;position:relative;background-color:#F2EFE9;background-image:radial-gradient(circle,rgba(0,0,0,.08) 1px,transparent 1px);background-size:20px 20px}
+#tree-canvas-wrap svg{display:block;width:100%;height:100%;overflow:visible}
+
+/* TREE EMAIL PANEL */
+#tree-email-panel{width:700px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:none;flex-direction:column;overflow:hidden;position:relative;min-width:360px}
+#tree-email-panel.tep-open{display:flex}
+#tep-resize{position:absolute;left:0;top:0;bottom:0;width:5px;cursor:ew-resize;z-index:10;background:transparent}
+#tep-resize:hover,#tep-resize.dragging{background:var(--bxl)}
+.tep-head{padding:10px 16px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px}
+.tep-head-left{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.tep-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tep-mt-lbl{font-size:10px;color:var(--muted);font-family:monospace}
+.tep-close{background:none;border:none;cursor:pointer;font-size:19px;color:var(--muted);padding:0 4px;line-height:1;flex-shrink:0}
+.tep-close:hover{color:var(--text)}
+.tep-cols{display:flex;flex:1;overflow:hidden;min-height:0}
+.tep-col{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:10px 12px;min-width:0}
+.tep-col+.tep-col{border-left:2px solid var(--border);background:#FAFAF8}
+.tep-col-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.tep-col-v1{color:#1D4ED8}.tep-col-v2{color:#6B7280}
+.tep-col-sub{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:10px}
+.tep-fl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:8px 0 3px}
+.tep-fl:first-of-type{margin-top:0}
+.tep-inp{width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;color:var(--text);background:#fff;outline:none;box-sizing:border-box}
+.tep-inp:focus{border-color:#2563EB;box-shadow:0 0 0 2px #DBEAFE}
+.tep-ta{width:100%;flex:1;min-height:220px;font-size:11.5px;padding:8px 10px;border:1px solid var(--border);border-radius:5px;font-family:-apple-system,sans-serif;color:var(--text);background:#fff;outline:none;resize:none;line-height:1.65;box-sizing:border-box;margin-top:3px}
+.tep-ta:focus{border-color:#2563EB;box-shadow:0 0 0 2px #DBEAFE}
+.tep-notes-row{padding:8px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:3px}
+.tep-notes-ta{width:100%;height:46px;font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;color:var(--text);resize:none;outline:none;box-sizing:border-box}
+.tep-notes-ta:focus{border-color:#2563EB}
+.tep-foot{padding:8px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:center}
+.tep-saved{font-size:11px;color:var(--green);margin-left:auto;opacity:0;transition:opacity .4s}
+.tep-saved.show{opacity:1}
+
+/* DIFF V1/V2 */
+.tep-diff-btn{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:transparent;cursor:pointer;font-family:inherit;color:var(--muted);margin-left:auto;transition:all .15s;white-space:nowrap;line-height:1.4}
+.tep-diff-btn:hover{background:var(--beige);color:var(--text)}
+.tep-diff-btn.active{background:#DCFCE7;color:#166534;border-color:#86EFAC;font-weight:600}
+.diff-view{font-size:11.5px;line-height:1.65;padding:8px 10px;border:1px solid #D1FAE5;border-radius:5px;background:#F0FDF4;min-height:220px;white-space:pre-wrap;word-break:break-word;overflow-y:auto;flex:1;margin-top:3px;display:none;color:var(--text)}
+.diff-view.on{display:block}
+.diff-subj-view{font-size:12px;padding:5px 8px;border:1px solid #D1FAE5;border-radius:5px;background:#F0FDF4;display:none;word-break:break-word;line-height:1.5;min-height:30px;color:var(--text)}
+.diff-subj-view.on{display:block}
+ins.d-ins{background:#DCFCE7;color:#14532D;text-decoration:none;border-radius:2px;padding:0 1px;font-style:normal}
+del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-radius:2px;padding:0 1px}
+.diff-unchanged{color:var(--muted)}
+.diff-legend{font-size:10px;color:var(--muted);margin-top:6px;display:flex;gap:10px;flex-shrink:0}
+.diff-legend span{display:flex;align-items:center;gap:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sant Roch — Funnel Email</h1>
+  <div class="hbtns">
+    <span class="saved" id="saved"></span>
+    <button class="hbtn hg" onclick="saveToStorage()">💾 Sauvegarder</button>
+    <button class="hbtn hg" onclick="exportCSV()">↓ CSV</button>
+    <button class="hbtn hg" onclick="exportJSON()">↓ JSON</button>
+    <button class="hbtn hw" onclick="resetAll()">Réinitialiser</button>
+  </div>
+</header>
+
+<div class="topbar">
+  <button class="ttab active" onclick="switchTab(0)">Parcours client</button>
+  <button class="ttab" onclick="switchTab(1)">Guest</button>
+  <button class="ttab" onclick="switchTab(2)">Carte cadeau</button>
+  <button class="ttab" onclick="switchTab(3)">Backlog</button>
+  <button class="tab-add" onclick="addTab()" title="Ajouter un onglet">＋</button>
+  <div class="vtabs">
+    <button class="vtab active" id="vt-table" onclick="switchView('table')">Tableau</button>
+    <button class="vtab" id="vt-tree" onclick="switchView('tree')">Arbre</button>
+  </div>
+</div>
+
+<div class="help-bar closed" id="help-bar">
+  <div class="help-toggle" onclick="toggleHelp()">
+    <span class="help-icon">📖</span>
+    <span class="help-label">Guide d'utilisation</span>
+    <span class="help-arrow">▾</span>
+  </div>
+  <div class="help-body">
+    <div class="help-section">
+      <h4>Tableau</h4>
+      <div class="help-item"><span class="help-key">Clic ligne</span>Ouvrir et modifier un email</div>
+      <div class="help-item"><span class="help-key">🗑 survol</span>Supprimer une ligne (et son nœud dans l'arbre)</div>
+      <div class="help-item"><span class="help-key">＋ Ajouter</span>Créer un nouvel email dans la section</div>
+      <div class="help-item"><span class="help-key">⠿ glisser</span>Réordonner les lignes dans une section</div>
+      <div class="help-item"><span class="help-key">Statut</span>À personnaliser · À créer · À investiguer · Étape clé · Garder</div>
+    </div>
+    <div class="help-section">
+      <h4>Arbre</h4>
+      <div class="help-item"><span class="help-key">Scroll</span>Zoomer / dézoomer</div>
+      <div class="help-item"><span class="help-key">Drag fond</span>Se déplacer dans le canvas</div>
+      <div class="help-item"><span class="help-key">● ancre</span>Tirer une connexion vers un autre nœud</div>
+      <div class="help-item"><span class="help-key">Double-clic</span>Modifier un nœud</div>
+      <div class="help-item"><span class="help-key">Clic droit</span>Menu contextuel (modifier, dupliquer, connecter, supprimer)</div>
+      <div class="help-item"><span class="help-key">🗑 Nœud</span>Supprimer le nœud sélectionné (et sa ligne dans le tableau)</div>
+    </div>
+    <div class="help-section">
+      <h4>Onglets avec double flux</h4>
+      <div class="help-item">Les onglets <strong>Guest</strong> et <strong>Carte cadeau</strong> affichent deux colonnes côte à côte dans l'arbre — un flux par persona.</div>
+      <div class="help-item"><span class="help-key">＋ Nœud</span>Choisir dans quel flux ajouter (Gauche / Droite)</div>
+    </div>
+    <div class="help-section">
+      <h4>Général</h4>
+      <div class="help-item"><span class="help-key">💾 Sauvegarder</span>Enregistre dans le navigateur (localStorage)</div>
+      <div class="help-item"><span class="help-key">↓ CSV / JSON</span>Exporter les données</div>
+      <div class="help-item"><span class="help-key">Réinitialiser</span>Remet les données d'origine</div>
+      <div class="help-item"><span class="help-key">Ajuster</span>Recentre l'arbre dans la vue</div>
+    </div>
+  </div>
+</div>
+
+<div class="statsbar" id="statsbar"></div>
+
+<div class="searchbar" id="searchbar">
+  <div class="search-input-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Rechercher dans les emails…" oninput="onSearch()">
+    <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
+  </div>
+  <div style="height:8px"></div>
+</div>
+
+<div id="main-layout" class="layout">
+  <!-- TABLE VIEW -->
+  <div id="layout-table" style="display:flex;flex:1;overflow:hidden;min-width:0">
+    <div class="left" id="left"></div>
+    <div class="right" id="right">
+      <div class="ep-empty" id="ep-empty"><div class="ep-icon">✏️</div><div>Cliquez sur une ligne<br>pour modifier</div></div>
+      <div class="ep-form" id="ep-form">
+        <div class="ep-head">
+          <div class="ep-badge" id="ep-badge"></div>
+          <div class="ep-title" id="ep-title"></div>
+          <button class="ep-close" onclick="closeEdit()">×</button>
+        </div>
+        <div class="ep-body">
+          <div class="sdiv" style="border-top:none;padding-top:0;margin-top:0">Schéma</div>
+          <div class="field-row">
+            <div class="field"><label>Nom affiché</label><input id="f-t1" oninput="liveUp()"></div>
+            <div class="field"><label>Sous-titre</label><input id="f-t2" oninput="liveUp()"></div>
+          </div>
+          <div class="field"><label>Statut</label>
+            <select id="f-type" onchange="liveUp()">
+              <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+              <option value="decision">⚪ À investiguer</option><option value="key">⬛ Étape clé</option>
+              <option value="ok">✅ Garder tel quel</option>
+            </select>
+          </div>
+          <div class="sdiv">Contenu de l'email</div>
+          <div class="field-row">
+            <div class="field"><label>Destinataire</label><input id="f-to"></div>
+            <div class="field"><label>Nom Marianatek</label><input id="f-mt" style="font-family:monospace;font-size:11px"></div>
+          </div>
+          <div class="field"><label>Objet</label><input id="f-subject"></div>
+          <div class="field"><label>Contenu clé</label><textarea id="f-content" style="min-height:90px"></textarea></div>
+          <div class="sdiv">Notes</div>
+          <div class="field"><textarea id="f-notes" style="min-height:50px"></textarea></div>
+        </div>
+        <div class="ep-foot">
+          <button class="bsave" onclick="saveEdit()">Sauvegarder</button>
+          <button class="bcancel" onclick="closeEdit()">Annuler</button>
+          <button class="bdanger" onclick="deleteRow()">🗑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREE VIEW -->
+  <div id="layout-tree">
+    <div class="tree-toolbar">
+      <span class="tlabel">Arbre :</span>
+      <button class="tbtn primary" onclick="addNode()">＋ Nœud</button>
+      <button class="tbtn" id="btn-connect" onclick="toggleConnectMode()" title="Clic source → clic cible">🔗 Connecter</button>
+      <button class="tbtn danger" id="btn-del-node" onclick="deleteSelectedNode()" disabled>🗑 Nœud</button>
+      <button class="tbtn danger" id="btn-del-edge" onclick="deleteSelectedEdge()" style="display:none">✂️ Connexion</button>
+      <span class="tree-hint" id="tree-hint">Scroll = zoom · Drag fond = déplacer · Ancres ● = connecter · Double-clic = modifier · Clic = voir email · Clic droit = menu</span>
+    </div>
+    <div class="tree-main">
+      <div id="tree-canvas-wrap">
+        <svg id="tree-svg"><g id="tree-vp"></g></svg>
+        <div class="zoom-controls">
+          <button class="zbtn" onclick="zoomBy(1.25)" title="Zoom +">＋</button>
+          <span id="zoom-display">100%</span>
+          <button class="zbtn" onclick="zoomBy(0.8)" title="Zoom -">－</button>
+          <button class="zbtn fit" onclick="fitScreen()">Ajuster</button>
+        </div>
+      </div>
+      <!-- TREE EMAIL PANEL -->
+      <div id="tree-email-panel">
+        <div id="tep-resize"></div>
+        <div class="tep-head">
+          <div class="tep-head-left">
+            <span id="tep-badge" class="badge"></span>
+            <span class="tep-name" id="tep-name">—</span>
+            <span class="tep-mt-lbl" id="tep-mt-lbl"></span>
+          </div>
+          <button class="tep-close" onclick="closeTep()" title="Fermer">×</button>
+        </div>
+        <div class="tep-cols">
+          <div class="tep-col">
+            <div class="tep-col-hd tep-col-v1">V1 <span class="tep-col-sub">version actuelle</span></div>
+            <div class="tep-fl">Objet</div>
+            <input class="tep-inp" id="tep-v1-subj" placeholder="Objet de l'email…">
+            <div class="tep-fl">Corps</div>
+            <textarea class="tep-ta" id="tep-v1-body" placeholder="Corps de l'email…"></textarea>
+          </div>
+          <div class="tep-col">
+            <div class="tep-col-hd tep-col-v2">V2 <span class="tep-col-sub">nouvelle version</span><button id="tep-diff-btn" class="tep-diff-btn" onclick="toggleDiff()" title="Afficher les différences avec V1">≠ Diff</button></div>
+            <div class="tep-fl">Objet</div>
+            <input class="tep-inp" id="tep-v2-subj" placeholder="Objet de l'email…">
+            <div class="diff-subj-view" id="diff-subj-view"></div>
+            <div class="tep-fl">Corps</div>
+            <textarea class="tep-ta" id="tep-v2-body" placeholder="Corps de l'email…"></textarea>
+            <div class="diff-view" id="diff-view"></div>
+            <div class="diff-legend" id="diff-legend" style="display:none">
+              <span><ins class="d-ins" style="font-size:10px">ajouté</ins></span>
+              <span><del class="d-del" style="font-size:10px">supprimé</del></span>
+              <span style="color:var(--muted);font-size:10px">· inchangé</span>
+            </div>
+          </div>
+        </div>
+        <div class="tep-notes-row">
+          <div class="tep-fl" style="margin:0 0 3px">Notes internes</div>
+          <textarea class="tep-notes-ta" id="tep-notes-ta" placeholder="Notes…"></textarea>
+        </div>
+        <div class="tep-foot">
+          <button class="bsave" style="font-size:12px;padding:5px 14px" onclick="saveTep()">💾 Sauvegarder</button>
+          <button class="bcancel" style="font-size:12px;padding:5px 14px" onclick="closeTep()">Fermer</button>
+          <span class="tep-saved" id="tep-saved">✓ Sauvegardé</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div><div class="modal-badge" id="m-badge"></div><div class="modal-title" id="m-title"></div></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="sdiv" style="border-top:none;padding-top:0;margin-top:0">Schéma</div>
+      <div class="field-row">
+        <div class="field"><label>Nom affiché</label><input id="m-t1"></div>
+        <div class="field"><label>Sous-titre</label><input id="m-t2"></div>
+      </div>
+      <div class="field"><label>Statut</label>
+        <select id="m-type">
+          <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+          <option value="decision">⚪ À investiguer</option><option value="key">⬛ Étape clé</option>
+          <option value="ok">✅ Garder tel quel</option>
+        </select>
+      </div>
+      <div class="sdiv">Contenu</div>
+      <div class="field-row">
+        <div class="field"><label>Destinataire</label><input id="m-to"></div>
+        <div class="field"><label>Nom Marianatek</label><input id="m-mt" style="font-family:monospace;font-size:11px"></div>
+      </div>
+      <div class="field"><label>Objet</label><input id="m-subject"></div>
+      <div class="field"><label>Contenu clé</label><textarea id="m-content" style="min-height:90px"></textarea></div>
+      <div class="sdiv">Notes</div>
+      <div class="field"><textarea id="m-notes" style="min-height:48px"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="bsave" onclick="saveModal()">Sauvegarder</button>
+      <button class="bcancel" onclick="closeModal()">Annuler</button>
+      <button class="bdanger" onclick="deleteModalRow()" id="modal-del-btn">🗑 Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD NODE MODAL -->
+<div class="modal-overlay" id="add-overlay" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal-box" style="width:400px">
+    <div class="modal-head">
+      <div><div class="modal-title">Ajouter un nœud</div></div>
+      <button class="modal-close" onclick="closeAddModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Nom affiché</label><input id="add-t1" placeholder="ex: Email de bienvenue"></div>
+      <div class="field"><label>Sous-titre</label><input id="add-t2" placeholder="ex: New Registration"></div>
+      <div class="field"><label>Type</label>
+        <select id="add-type">
+          <option value="email">🟠 À personnaliser</option><option value="todo">🔴 À créer</option>
+          <option value="decision">⚪ Décision / branchement</option><option value="key">⬛ Étape clé</option>
+          <option value="ok">✅ Garder tel quel</option>
+        </select>
+      </div>
+      <div id="add-side-wrap" class="field" style="display:none">
+        <label>Côté (vue double)</label>
+        <select id="add-side"><option value="left">Gauche</option><option value="right">Droite</option></select>
+      </div>
+      <div class="field" id="add-connect-wrap" style="display:none">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400">
+          <input type="checkbox" id="add-connect" style="width:auto;accent-color:var(--bx)">
+          Connecter depuis le nœud sélectionné
+        </label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="bsave" onclick="confirmAddNode()">Ajouter</button>
+      <button class="bcancel" onclick="closeAddModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SECTION MODAL -->
+<div class="modal-overlay" id="sec-overlay" onclick="if(event.target===this)closeSecModal()">
+  <div class="modal-box" style="width:380px">
+    <div class="modal-head">
+      <div><div class="modal-title" id="sec-modal-title">Ajouter une section</div></div>
+      <button class="modal-close" onclick="closeSecModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Titre de la section</label><input id="sec-title" placeholder="ex: Onboarding"></div>
+      <div class="field"><label>Description</label><input id="sec-tag" placeholder="ex: Pour les nouveaux membres"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="bsave" onclick="confirmSecModal()">Créer</button>
+      <button class="bcancel" onclick="closeSecModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-menu" id="ctx-menu">
+  <div class="ctx-item" onclick="ctxEdit()">✏️ Modifier</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxConnectFrom()">🔗 Connecter depuis ici</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxDuplicate()">⧉ Dupliquer</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxDelete()">🗑 Supprimer</div>
+</div>
+
+<!-- EDGE LABEL POPUP -->
+<div class="elp" id="elp">
+  <label>Label de connexion</label>
+  <input type="text" id="elp-input" placeholder="ex: Oui, Non, J+3…">
+  <div class="elp-btns">
+    <button class="elp-ok" onclick="saveEdgeLabel()">OK</button>
+    <button class="elp-cancel" onclick="closeElp()">Annuler</button>
+    <button class="elp-cancel" style="margin-left:auto;color:var(--red)" onclick="deleteEdgeLabel()">Effacer</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA
+═══════════════════════════════════════ */
+const TABS=[
+{label:'Parcours client',sections:[
+  {title:'Acquisition',tag:'De l\'inscription au premier achat',rows:[
+    {id:'a1',type:'email',t1:'Email de bienvenue',t2:'New Registration',to:'Nouveau client',mt:'New Registration',subject:'',content:'Univers Sant Roch · Concept sauna/bain froid',notes:''},
+    {id:'a2',type:'todo',t1:'Relance J+3',t2:'Pas encore réservé',to:'Client non acheteur',mt:'—',subject:'',content:'FAQ · Témoignage · À quoi s\'attendre',notes:'Vérifier faisabilité Explore Growth'},
+    {id:'a3',type:'todo',t1:'Relance J+7',t2:'Dernière relance',to:'Client non acheteur',mt:'—',subject:'',content:'Dernière relance douce',notes:'Vérifier faisabilité Explore Growth'},
+    {id:'a4',type:'todo',t1:'Abandon panier',t2:'H+2',to:'Client',mt:'—',subject:'',content:'Court · Direct · Lien retour panier · Pas de promo',notes:'Probablement pas possible avec Explore Growth — à vérifier'},
+  ]},
+  {title:'Confirmation achat',tag:'Selon le type d\'offre',rows:[
+    {id:'b1',type:'email',t1:'Confirmation abonnement',t2:'',to:'Nouveau membre',mt:'Purchase Confirmation',subject:'',content:'Récap · Avantages membre · Ce que comprend l\'abonnement · Lien réservation · Communauté',notes:'Idéalement un mail par type d\'abonnement — à vérifier dans MT'},
+    {id:'b2',type:'email',t1:'Confirmation pack',t2:'',to:'Acheteur pack',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Comment inviter un guest',notes:''},
+    {id:'b3',type:'email',t1:'Confirmation séance à l\'unité',t2:'',to:'Acheteur séance',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Contre-indications',notes:''},
+  ]},
+  {title:'Pré-session',tag:'De la réservation à la session',rows:[
+    {id:'c1',type:'email',t1:'Confirmation réservation',t2:'',to:'Client',mt:'Appointment Confirmation - Customer',subject:'',content:'Heure · Adresse · Ce qu\'il faut apporter (maillot, serviette) · Politique annulation',notes:''},
+    {id:'c2',type:'todo',t1:'Rappel J-1 — session libre',t2:'',to:'Client',mt:'Appointment Reminder - Customer',subject:'',content:'Temps recommandés chaud/froid · Conseils préparation · Ce qu\'il faut apporter',notes:'Vérifier si possible d\'avoir un mail séparé libre vs guidée dans MT'},
+    {id:'c3',type:'todo',t1:'Rappel J-1 — session guidée',t2:'',to:'Client',mt:'Appointment Reminder - Customer',subject:'',content:'Ce qui vous attend · Rôle du guide · Comment se préparer · Ce qu\'il faut apporter',notes:'Vérifier si possible d\'avoir un mail séparé libre vs guidée dans MT'},
+    {id:'c4',type:'email',t1:'Annulation réservation (client)',t2:'',to:'Client',mt:'Appointment Cancellation - Customer',subject:'',content:'Confirmation annulation · CTA : Reprogrammer votre session',notes:''},
+    {id:'c5',type:'email',t1:'Liste d\'attente — ajout',t2:'',to:'Client',mt:'Waitlist Addition',subject:'',content:'"On te prévient dès qu\'une place se libère" · CTA : Annuler si changement de plan',notes:''},
+    {id:'c6',type:'email',t1:'Liste d\'attente — place obtenue',t2:'',to:'Client',mt:'Waitlist Upgrade',subject:'',content:'Place obtenue · Date/heure confirmée · Ce qu\'il faut apporter · CTA : Confirmer rapidement',notes:''},
+    {id:'c7',type:'email',t1:'Liste d\'attente — annulation',t2:'',to:'Client',mt:'Waitlist Cancellation',subject:'',content:'Confirmation de retrait · Message bienveillant · Invitation à revenir',notes:''},
+  ]},
+  {title:'Post-session',tag:'Après la visite',rows:[
+    {id:'d1',type:'email',t1:'First Check-In',t2:'1ère visite',to:'Client (1ère visite)',mt:'First Class Check-In',subject:'',content:'Message chaleureux · Conseils récupération · Invitation à revenir · Partager l\'expérience',notes:''},
+    {id:'d2',type:'todo',t1:'Post-session J+1',t2:'',to:'Client',mt:'—',subject:'',content:'Conseils récupération · Prochain créneau · Partager l\'expérience',notes:'À créer dans Explore Growth'},
+    {id:'d3',type:'todo',t1:'Upsell abonnement',t2:'Après 2e-3e visite',to:'Client sans abonnement',mt:'—',subject:'',content:'Passer à l\'abonnement · Accès prioritaire · CTA doux',notes:'Voir faisabilité'},
+  ]},
+  {title:'Fidélisation & réactivation',tag:'Membres actifs et inactifs',rows:[
+    {id:'e1',type:'todo',t1:'Communication membre',t2:'Événements · Communauté',to:'Membre actif',mt:'—',subject:'',content:'Newsletters membre · Invitations événements · Sessions thématiques · Exclusivité membres',notes:'À créer dans Explore Growth — regrouper toute la communication régulière membres'},
+    {id:'e2',type:'email',t1:'Pause abonnement (Freeze)',t2:'',to:'Membre',mt:'Membership Freeze',subject:'',content:'Confirmation freeze · Date de reprise · Message de retour chaleureux',notes:''},
+    {id:'e3',type:'email',t1:'Résiliation abonnement',t2:'',to:'Membre',mt:'Membership Cancellation',subject:'',content:'Email rétention · Offre de pause (à décider si on complique le process)',notes:'Décider si on transforme en email rétention avec offre de pause ou non'},
+    {id:'e4',type:'todo',t1:'Réactivation J+30',t2:'',to:'Client inactif',mt:'—',subject:'',content:'Nouveau contenu / événement · Invitation à revenir',notes:'À créer dans Explore Growth'},
+    {id:'e5',type:'todo',t1:'Réactivation J+60',t2:'Dernière chance',to:'Client inactif',mt:'—',subject:'',content:'Dernier email · Offre d\'entrée · Si pas de retour → sortie propre de la liste',notes:'À créer dans Explore Growth'},
+  ]},
+  {title:'Milestones & gamification',tag:'Programme de fidélité par visites',rows:[
+    {id:'f1',type:'key', t1:'Milestones visites',      t2:'Programme de fidélité',    to:'Membre / Pack',   mt:'—',subject:'',content:'Programme de récompenses basé sur le nombre de visites cumulées · À définir avec la boss',notes:'Décider des seuils et récompenses'},
+    {id:'f2',type:'email',t1:'Milestone 1 · X visites', t2:'Récompense 1',             to:'Membre / Pack',   mt:'—',subject:'',content:'Récompense 1 · Contenu à définir',notes:'Seuil à définir — ex: 5 visites'},
+    {id:'f3',type:'email',t1:'Milestone 2 · XX visites',t2:'Récompense 2',             to:'Membre / Pack',   mt:'—',subject:'',content:'Récompense 2 · Contenu à définir',notes:'Seuil à définir — ex: 10 visites'},
+    {id:'f4',type:'todo', t1:'Suite milestones',        t2:'Programme complet',        to:'Membre / Pack',   mt:'—',subject:'',content:'Programme complet · À définir avec la boss',notes:'Voir faisabilité technique dans Explore Growth / Marianatek'},
+  ]},
+]},
+{label:'Guest',sections:[
+  {title:'FLUX GUEST',tag:'Ce que reçoit la personne invitée',split:'left',color:'#6C1412',rows:[
+    {id:'g1',type:'email',t1:'Invitation — place confirmée',t2:'',to:'Le guest',mt:'Reservation Guest Invitation',subject:'',content:'Nom du membre qui invite · Date, heure, lieu · Ce qu\'il faut apporter · CTA : Ajouter au calendrier',notes:''},
+    {id:'g2',type:'email',t1:'Annulation — par le membre',t2:'',to:'Le guest',mt:'Reservation Guest Invitation Cancellation',subject:'',content:'Confirmation annulation · Date/heure · Invitation à reprogrammer si crédit offert',notes:'Dépend de si on a offert un crédit ou pas — à décider'},
+    {id:'g3',type:'email',t1:'Liste d\'attente — ajout',t2:'',to:'Le guest',mt:'Waitlist Guest Invitation',subject:'',content:'"On te prévient dès qu\'une place se libère" · CTA : Annuler si changement de plan',notes:''},
+    {id:'g4',type:'email',t1:'Liste d\'attente — place obtenue',t2:'',to:'Le guest',mt:'Guest Waitlist Invitation Upgrade',subject:'',content:'Place obtenue · Date/heure confirmée · Ce qu\'il faut apporter · CTA : Ajouter au calendrier',notes:''},
+    {id:'g5',type:'email',t1:'Liste d\'attente — annulation',t2:'',to:'Le guest',mt:'Waitlist Guest Invitation Cancellation',subject:'',content:'Confirmation de retrait · Message bienveillant · Invitation à revenir via un membre',notes:''},
+    {id:'g6',type:'todo',t1:'Post-session J+1',t2:'',to:'Le guest',mt:'—',subject:'',content:'Retour d\'expérience · Conseils récupération · Invitation à s\'inscrire',notes:'À créer — le guest rejoint le parcours client classique s\'il s\'inscrit'},
+  ]},
+  {title:'FLUX MEMBRE QUI INVITE',tag:'Ce que reçoit la personne qui invite',split:'right',color:'#993C1D',rows:[
+    {id:'h1',type:'email',t1:'Guest inscrit — confirmation',t2:'',to:'La personne qui invite',mt:'Guest Reservation Confirmation',subject:'',content:'Récap session · Nom du guest confirmé · Infos pratiques à transmettre · CTA : Gérer ma réservation',notes:''},
+    {id:'h2',type:'email',t1:'Annulation — guest annule',t2:'',to:'La personne qui invite',mt:'Guest Reservation Cancellation',subject:'',content:'Récap session annulée · Info place libérée · CTA : Inviter un autre guest ?',notes:''},
+    {id:'h3',type:'email',t1:'Liste d\'attente — ajout guest',t2:'',to:'La personne qui invite',mt:'Guest Waitlist Addition',subject:'',content:'Récap session · Position en attente · CTA : Annuler si changement de plan',notes:''},
+    {id:'h4',type:'email',t1:'Liste d\'attente — guest obtient sa place',t2:'',to:'La personne qui invite',mt:'Guest Waitlist Upgrade',subject:'',content:'Confirmation guest inscrit · Récap session · Rappel que le guest a reçu ses infos directement',notes:''},
+    {id:'h5',type:'email',t1:'Liste d\'attente — annulation guest',t2:'',to:'La personne qui invite',mt:'Guest Waitlist Cancellation',subject:'',content:'Confirmation · Session concernée · CTA : Réessayer sur une prochaine session',notes:''},
+    {id:'h6',type:'decision',t1:'Appointment Confirmation - Guest',t2:'',to:'La personne qui invite ?',mt:'Appointment Confirmation - Guest',subject:'',content:'',notes:'À investiguer — différence avec Guest Reservation Confirmation ? 1:1 vs groupe ?'},
+    {id:'h7',type:'decision',t1:'Appointment Cancellation - Guest',t2:'',to:'La personne qui invite ?',mt:'Appointment Cancellation - Guest',subject:'',content:'',notes:'À investiguer'},
+    {id:'h8',type:'decision',t1:'Appointment Recurring Confirmation - Guest',t2:'',to:'La personne qui invite ?',mt:'Appointment Recurring Confirmation - Guest',subject:'',content:'',notes:'À confirmer — existe pour sessions récurrentes ?'},
+  ]},
+]},
+{label:'Carte cadeau',sections:[
+  {title:'FLUX ACHETEUR',tag:'Ce que reçoit la personne qui offre',split:'left',color:'#6C1412',rows:[
+    {id:'k1',type:'todo',t1:'Confirmation achat',t2:'',to:'Acheteur',mt:'Non trouvé dans Marianatek',subject:'',content:'Récap · Lien pour envoyer par email ou imprimer · Option envoi différé',notes:'Vérifier si existe dans MT ou à créer dans Explore Growth'},
+  ]},
+  {title:'FLUX BÉNÉFICIAIRE',tag:'Ce que reçoit la personne qui reçoit la carte',split:'right',color:'#993C1D',rows:[
+    {id:'l1',type:'email',t1:'Réception carte cadeau',t2:'',to:'Bénéficiaire',mt:'Gift Card Notification',subject:'',content:'De la part de [prénom] · Découverte Sant Roch · Code + lien réservation · Comment utiliser la carte',notes:'Dès activation → rejoint le parcours classique (New Registration)'},
+    {id:'l2',type:'todo',t1:'Relance non-activation J+14',t2:'',to:'Bénéficiaire',mt:'—',subject:'',content:'"Votre cadeau vous attend" · Ton doux · Lien direct réservation',notes:'Voir faisabilité Explore Growth'},
+    {id:'l3',type:'todo',t1:'Relance expiration J+XX',t2:'',to:'Bénéficiaire',mt:'—',subject:'',content:'Urgence douce · Dernier rappel · Durée de validité restante',notes:'Voir faisabilité'},
+  ]},
+]},
+{label:'Backlog',sections:[
+  {title:'Emails techniques',tag:'Automatiques ou manuels',rows:[
+    {id:'z1',type:'email',t1:'Password Reset',t2:'',to:'Client',mt:'Password Reset',subject:'',content:'Fonctionnel · À habiller aux couleurs Sant Roch',notes:''},
+    {id:'z2',type:'email',t1:'Membership Autopay Failure',t2:'',to:'Membre',mt:'Membership Autopay Failure',subject:'',content:'Échec autopay · CTA : Mettre à jour votre carte bancaire',notes:''},
+    {id:'z3',type:'todo',t1:'Customer Waiver',t2:'',to:'Nouveau client',mt:'Customer Waiver',subject:'',content:'Décharge à signer lors de la première inscription',notes:'Il faut le créer — à quelle étape du funnel on le place ? Et les contre-indications aussi'},
+    {id:'z4',type:'ok',t1:'Vat Invoice Email',t2:'',to:'Client',mt:'Vat Invoice Email',subject:'',content:'Facture TVA · Garder tel quel',notes:'Garder tel quel'},
+    {id:'z5',type:'ok',t1:'Studio Chargeback Notification',t2:'',to:'Studio',mt:'Studio Chargeback Notification',subject:'',content:'Notification chargeback / litige paiement · Garder tel quel',notes:'Garder tel quel'},
+    {id:'z6',type:'email',t1:'Customer Communication',t2:'',to:'Client',mt:'Customer Communication',subject:'',content:'Communication manuelle envoyée par le studio',notes:''},
+  ]},
+]},
+];
+
+/* ─── EMAIL BODIES (contenus réels des mails, v1 = version actuelle depuis Marianatek / CSV) ─── */
+const EMAIL_BODIES={
+  'New Registration':{v1:{subject:'Bienvenue chez Sant Roch !',content:'Bonjour {{user_first_name}},\n\nBienvenue chez Sant Roch et merci pour votre inscription.\n\nIci, la chaleur, le froid et le silence deviennent un prétexte à la reconnexion, à soi et aux autres.\n\nTrois formats s\'offrent à vous :\n\nLe Rituel Guidé — accompagné\nUne séance immersive de 70 minutes menée par nos guides. Un moment collectif, intense et profond, pour traverser le chaud et le froid ensemble.\n\nLe Rituel Libre — à votre rythme\nAccédez librement au sauna, aux bains froids et à la salle de relaxation pour composer votre propre parcours. 70 minutes en autonomie, selon vos sensations.\n\nLe Rituel Social — en énergie\nMême espace, même durée que le Rituel Libre, une ambiance plus ouverte, une playlist plus présente. Idéal entre amis ou pour faire des rencontres. Disponible le jeudi, vendredi et samedi soir.\n\nNous vous invitons à consulter le planning pour réserver votre première séance : http://sant-roch.com/schedule.\n\nInformations importantes :\n— Les réservations peuvent être annulées jusqu\'à 12 heures avant le début de la séance. En cas d\'absence, une pénalité de 15€ sera appliquée.\n— Si vous êtes enceinte ou présentez un état de santé particulier, nous vous recommandons de demander l\'avis de votre médecin avant de participer.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Reservation Confirmation':{v1:{subject:'Vous avez réservé {{class_name}} à {{class_time}} le {{class_full_date}} !',content:'Bonjour {{user_first_name}},\n\nVotre place est réservée pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}}. Nous vous donnons rendez-vous le {{class_full_date_with_weekday}} à {{class_time}}.\n\nPour que l\'expérience soit pleine et entière :\n\nMerci d\'arriver 10 à 15 minutes avant le début. L\'accès ne peut être garanti après le début de la séance ; nous ferons notre possible pour vous orienter vers une autre disponibilité.\n\nPensez à apporter votre maillot de bain. Serviettes, produits douche et casiers sont mis à votre disposition sur place. L\'espace est pieds nus au-delà des vestiaires.\n\nPrivilégiez un repas léger 1 à 2 heures avant. Évitez de venir à jeun ou après un repas copieux.\n\nEn réservant votre séance, vous reconnaissez participer en pleine connaissance de votre état de santé.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Appointment Confirmation - Customer':{v1:{subject:'Confirmation de rendez-vous',content:'Bonjour {{customer_name}},\nVotre réservation « {{appointment_name}} » est confirmée pour le {{appointment_datetime}} chez SANT ROCH - {{studio_location}}, avec {{instructor_name}}.\n\nAfin de garantir une expérience fluide et qualitative pour tous :\n• Merci d\'arriver 10 minutes avant le début de la séance\n• Pensez à apporter votre maillot de bain\n• Les serviettes sont mises à votre disposition sur place\n\nNous nous réjouissons de vous accueillir très bientôt.\n\nÀ bientôt,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Waitlist Addition':{v1:{subject:'Vous avez rejoint la liste d’attente pour {{class_name}} à {{class_time}} le {{class_full_date}} !',content:'Bonjour {{user_first_name}},\n\nVous êtes inscrit(e) sur la liste d\'attente pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_full_date_with_weekday}} à {{class_time}}.\n\nSi une place se libère, vous serez immédiatement prévenu(e) par email. Votre crédit est réservé pour cette inscription et vous sera retourné si la place ne se libère pas.\n\nPour vous retirer de la liste d\'attente, rendez-vous sur votre compte à http://sant-roch.com/account.\n\nAu plaisir de vous accueillir chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Waitlist Upgrade':{v1:{subject:'Vous avez obtenu une place - {{class_name}} à {{class_time}} le {{class_full_date}}',content:'Bonjour {{user_first_name}},\n\nFélicitations ! Une place s\'est libérée. Votre réservation est confirmée pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_long_date}} à {{class_time}}.\n\nPour que l\'expérience soit pleine et entière :\n\nMerci d\'arriver 10 à 15 minutes avant le début. L\'accès ne peut être garanti après le début de la séance ; nous ferons notre possible pour vous orienter vers une autre disponibilité.\n\nPensez à apporter votre maillot de bain. Serviettes, produits douche et casiers sont mis à votre disposition sur place. L\'espace est pieds nus au-delà des vestiaires.\n\nSi vous ne pouvez finalement pas être présent(e), annulez dès que possible depuis votre compte sur http://sant-roch.com pour libérer la place.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Waitlist Cancellation':{v1:{subject:'Réservation annulée : {{class_time}} {{class_name}}',content:'Bonjour {{user_first_name}},\n\nVous avez été retiré(e) de la liste d\'attente pour {{class_name}} le {{class_full_date_with_weekday}} à {{class_time}}. Votre crédit a été recrédité sur votre compte.\n\nPour découvrir d\'autres créneaux disponibles : http://sant-roch.com/schedule.\n\nSi cette annulation a été effectuée par erreur, écrivez-nous à mailto:vendome@sant-roch.com dès que possible.\n\nÀ bientôt,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Reservation Cancellation':{v1:{subject:'Annulation de votre réservation : {{class_time}} {{class_name}}',content:'Bonjour {{user_first_name}},\n\nVotre réservation pour {{class_name}} le {{class_full_date_with_weekday}} à {{class_time}} a bien été annulée. Votre crédit a été recrédité sur votre compte.\n\nPour réserver une autre séance : http://sant-roch.com/schedule.\n\nSi cette annulation a été effectuée par erreur, écrivez-nous à mailto:vendome@sant-roch.com dès que possible.\n\nAu plaisir de vous accueillir à nouveau chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'First Class Check-In':{v1:{subject:'Merci de votre visite. Faites nous part de votre expérience',content:'Bonjour {{user_first_name}},\n\nMerci d\'avoir partagé ce premier moment avec nous chez Sant Roch.\n\nSi vous avez quelques minutes, nous serions très heureux d\'entendre votre retour, qu\'il soit positif, critique, ou simplement une remarque. Cela nous permet de continuer à faire évoluer l\'expérience.\n\nhttps://app.notion.com/p/33510567c3fd80c3ac8bc548f5f4ce7a?pvs=21\n\nVous avez oublié quelque chose ? Écrivez-nous, nous gardons les objets trouvés à l\'accueil.\n\nUne question sur votre compte ou vos crédits ? Connectez-vous à http://sant-roch.com/account ou écrivez-nous à mailto:vendome@sant-roch.com.\n\nPrenez soin de vous,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Membership Freeze':{v1:{subject:'Confirmation de suspension de votre abonnement',content:'Bonjour {{user_name}},\n\nVotre abonnement {{membership_contract_name}} a bien été mis en pause, conformément à votre demande.\n\nVos crédits restent disponibles à votre retour. Pour réactiver votre abonnement ou pour toute question, écrivez-nous à mailto:vendome@sant-roch.com.\n\nLorsque vous reprendrez, retrouvez le planning sur http://sant-roch.com/schedule.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Membership Cancellation':{v1:{subject:'Confirmation d’annulation de votre abonnement',content:'Bonjour {{user_name}},\n\nVotre abonnement {{membership_contract_name}} a bien été annulé.\n\nEn attendant, nous vous invitons à profiter pleinement de votre abonnement jusqu\'à sa date d\'effet : http://sant-roch.com/schedule.\n\nPour toute question, écrivez-nous à mailto:vendome@sant-roch.com.\n\nAu plaisir de vous accueillir à nouveau chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Reservation Guest Invitation':{v1:{subject:'{{booked_on_behalf_of_user_full_name}} a réservé {{class_name}} à {{class_time}} le {{class_full_date}} pour vous !',content:'Bonjour {{user_first_name}},\n\nUne place vous a été réservée pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_full_date_with_weekday}} à {{class_time}}.\n\nPour que l\'expérience soit pleine et entière :\n\nMerci d\'arriver 10 à 15 minutes avant le début. L\'accès ne peut être garanti après le début de la séance ; nous ferons notre possible pour vous orienter vers une autre disponibilité.\n\nPensez à apporter votre maillot de bain. Serviettes, produits douche et casiers sont mis à votre disposition sur place. L\'espace est pieds nus au-delà des vestiaires.\n\nPrivilégiez un repas léger 1 à 2 heures avant. Évitez de venir à jeun ou après un repas copieux.\n\nSi vous êtes enceinte ou présentez un état de santé particulier, nous vous recommandons de demander l\'avis de votre médecin avant de participer.\n\nPour toute question, écrivez-nous à mailto:vendome@sant-roch.com.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Guest Reservation Confirmation':{v1:{subject:'Réservation effectuée pour votre invité(e) : {{class_name}} à {{class_time}} le {{class_full_date}} !',content:'Bonjour {{user_first_name}},\n\nUne place a été réservée pour votre invité(e) au {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_full_date_with_weekday}} à {{class_time}}.\n\nVotre invité(e) recevra une confirmation par email. Pour une arrivée sans accroc, invitez-le ou la à créer un compte Sant Roch à l\'avance sur http://sant-roch.com, si ce n\'est pas déjà fait.\n\nMerci d\'arriver 10 à 15 minutes avant le début. Maillot de bain requis ; serviettes, produits douche et casiers sont fournis sur place.\n\nSi cette réservation a été effectuée par erreur, écrivez-nous à mailto:vendome@sant-roch.com.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Guest Reservation Cancellation':{v1:{subject:'Réservation invité annulée',content:'Bonjour {{user_first_name}},\n\nLa réservation pour votre invité(e) au {{class_name}} le {{class_full_date_with_weekday}} à {{class_time}} a bien été annulée. Votre crédit a été recrédité sur votre compte.\n\nPour réserver une autre séance : http://sant-roch.com/schedule.\n\nSi cette annulation a été effectuée par erreur, écrivez-nous à mailto:vendome@sant-roch.com dès que possible.\n\nAu plaisir de vous accueillir à nouveau chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Waitlist Guest Invitation':{v1:{subject:'Réservation Liste d’attente : {{class_time}} {{class_name}}',content:'Bonjour {{user_first_name}},\n\nVous êtes inscrit(e) sur la liste d\'attente pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_full_date_with_weekday}} à {{class_time}}.\n\nSi une place se libère, vous serez immédiatement prévenu(e) par email.\n\nPour vous retirer de la liste d\'attente, rendez-vous sur votre compte à http://sant-roch.com/account.\n\nAu plaisir de vous accueillir chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Guest Waitlist Invitation Upgrade':{v1:{subject:'Vous avez obtenu une place pour {{class_name}} à {{class_time}} le {{class_full_date}} !',content:'Bonjour {{user_first_name}},\n\nFélicitations ! Une place s\'est libérée. Votre réservation est confirmée pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_long_date}} à {{class_time}}.\n\nPour que l\'expérience soit pleine et entière :\n\nMerci d\'arriver 10 à 15 minutes avant le début. L\'accès ne peut être garanti après le début de la séance ; nous ferons notre possible pour vous orienter vers une autre disponibilité.\n\nPensez à apporter votre maillot de bain. Serviettes, produits douche et casiers sont mis à votre disposition sur place. L\'espace est pieds nus au-delà des vestiaires.\n\nSi vous ne pouvez finalement pas être présent(e), écrivez-nous à mailto:vendome@sant-roch.com dès que possible.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Guest Waitlist Addition':{v1:{subject:'Votre invité rejoint la liste d’attente pour {{class_name}} à {{class_time}} !',content:'Bonjour {{user_first_name}},\n\nVotre invité(e) est inscrit(e) sur la liste d\'attente pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_full_date_with_weekday}} à {{class_time}}.\n\nSi une place se libère, vous serez immédiatement prévenu(e) par email. Votre crédit est réservé pour cette inscription et vous sera retourné si la place ne se libère pas.\n\nAu plaisir de vous accueillir chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Guest Waitlist Upgrade':{v1:{subject:'Votre invité a obtenu une place pour {{class_name}} à {{class_time}} le {{class_full_date}} !',content:'Bonjour {{user_first_name}},\n\nUne place s\'est libérée pour votre invité(e). Sa réservation est confirmée pour {{class_name}}{{#if class_instructors}} avec {{class_instructors}}{{/if}} le {{class_long_date}} à {{class_time}}.\n\nVotre invité(e) recevra une confirmation par email avec les informations pratiques. Si elle ou il n\'a pas encore créé de compte Sant Roch, invitez-le ou la à le faire à l\'avance sur http://sant-roch.com.\n\nSi votre invité(e) ne peut finalement pas être présent(e), annulez dès que possible depuis votre compte sur http://sant-roch.com pour libérer la place.\n\nÀ très vite chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Gift Card Notification':{v1:{subject:'Vous avez reçu une carte cadeau !',content:'Bonjour {{recipient_name}},\n\nVous avez reçu une carte cadeau Sant Roch d\'un montant de {{gift_card_value}}{{#if custom_message}}, accompagnée d\'un message :\n\n{{custom_message}}{{else}}.{{/if}}\n\nVotre code d\'activation : {{redemption_code}}\n\nPour utiliser votre carte cadeau :\n1. Rendez-vous sur la page Offres : http://sant-roch.com/buy\n2. Choisissez le pack ou la séance qui vous convient\n3. Entrez votre code d\'activation au moment du paiement\n\nSi vous rencontrez le moindre souci, écrivez-nous à mailto:vendome@sant-roch.com avec votre nom et celui de la personne qui vous l\'a offert. Nous trouverons une solution avec vous.\n\nAu plaisir de vous accueillir chez Sant Roch,\nL\'équipe Sant Roch\n\n4 rue Saint-Roch, 75001 Paris'},v2:{subject:'',content:''}},
+  'Appointment Reminder - Customer':{v1:{subject:'Rappel de votre prochain rendez-vous',content:'Bonjour {{customer_name}},\n\nNous vous rappelons votre prochain rendez-vous « {{appointment_name}} » le {{appointment_datetime}} à {{studio_location}} avec {{instructor_name}}.\n\nSi vos disponibilités changent ou si vous devez annuler, merci de nous en informer dès que possible.\n\nÀ très bientôt,\nL\'équipe Sant Roch'},v2:{subject:'',content:''}},
+};
+
+// Seed v1/v2 fields from EMAIL_BODIES
+TABS.forEach(t=>t.sections.forEach(s=>s.rows.forEach(r=>{
+  if(!r.v1) r.v1={subject:'',content:''};
+  if(!r.v2) r.v2={subject:'',content:''};
+  const b=EMAIL_BODIES[r.mt];
+  if(b&&!r.v1.content){r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;}
+})));
+
+const orig=JSON.parse(JSON.stringify(TABS));
+
+/* ─── TREES DATA ─── */
+const TREES=[
+  {nodes:[
+    {x:220,y:20,w:220,h:40,type:'key',t1:'Inscription sur le site',t2:''},
+    {x:200,y:90,w:260,h:36,type:'email',t1:'Email de bienvenue',t2:'New Registration'},
+    {x:195,y:155,w:270,h:36,type:'decision',t1:'A-t-il acheté ?',t2:'dans les 7 jours suivants'},
+    {x:40,y:220,w:160,h:58,type:'todo',t1:'Relances',t2:'J+3 · J+7 sans achat'},
+    {x:400,y:220,w:200,h:36,type:'decision',t1:'Quel achat ?',t2:'type de produit'},
+    {x:280,y:290,w:120,h:36,type:'email',t1:'Conf. abo',t2:'par type'},
+    {x:410,y:290,w:130,h:36,type:'email',t1:'Conf. pack',t2:'+ inviter guest'},
+    {x:550,y:290,w:100,h:36,type:'email',t1:'Conf. séance',t2:''},
+    {x:345,y:400,w:250,h:36,type:'decision',t1:'Il réserve une session',t2:'via le lien dans l\'email'},
+    {x:345,y:465,w:250,h:36,type:'decision',t1:'Session disponible ?',t2:'place libre ou liste d\'attente'},
+    {x:345,y:530,w:250,h:36,type:'email',t1:'Confirmation réservation',t2:'Appointment Confirmation'},
+    {x:160,y:530,w:200,h:36,type:'email',t1:'Liste d\'attente',t2:'Waitlist Addition'},
+    {x:160,y:595,w:200,h:36,type:'decision',t1:'Place se libère ?',t2:''},
+    {x:44,y:660,w:200,h:36,type:'email',t1:'Place obtenue — liste d\'attente',t2:'Waitlist Upgrade'},
+    {x:44,y:730,w:180,h:36,type:'email',t1:'Annulation liste attente',t2:'Waitlist Cancellation'},
+    {x:345,y:660,w:250,h:50,type:'email',t1:'Rappel J-1',t2:'Libre · Guidée'},
+    {x:345,y:740,w:250,h:36,type:'decision',t1:'Annule avant la session ?',t2:''},
+    {x:530,y:800,w:110,h:36,type:'email',t1:'Email annulation',t2:'CTA reprogrammer'},
+    {x:345,y:800,w:160,h:36,type:'key',t1:'Session',t2:'sauna + bain froid'},
+    {x:310,y:865,w:250,h:36,type:'decision',t1:'Première visite ?',t2:''},
+    {x:520,y:920,w:110,h:36,type:'email',t1:'First check-in',t2:'+ J+1'},
+    {x:310,y:920,w:200,h:36,type:'todo',t1:'Post-session J+1',t2:'récupération · prochain créneau'},
+    // [22] — décision post-session
+    {x:230,y:1010,w:300,h:40,type:'decision',t1:'Quel est son statut ?',t2:'Inactif · Pack · Membre actif'},
+    // ── Branche gauche : Inactif / réactivation ──
+    {x:10, y:1090,w:210,h:36,type:'todo',    t1:'Réactivation J+30',       t2:'Message de retour doux'},
+    {x:10, y:1156,w:210,h:36,type:'todo',    t1:'Réactivation J+60',       t2:"Dernier rappel · offre d'entrée"},
+    {x:10, y:1222,w:210,h:36,type:'decision',t1:'Sortie propre',            t2:'Hors liste si pas de retour'},
+    // ── Branche centre : Pack de séances ──
+    {x:250,y:1090,w:240,h:50,type:'todo',    t1:'Upsell abonnement',       t2:'Après X visites → propose abo · comparatif pack vs abo'},
+    // ── Branche droite : Membre actif ──
+    {x:510,y:1090,w:230,h:40,type:'todo',    t1:'Communication membre',    t2:'Événements · Communauté · Newsletters'},
+    {x:510,y:1160,w:230,h:36,type:'email',   t1:'Pause abonnement (Freeze)',t2:'Membership Freeze · pause confirmée'},
+    {x:510,y:1220,w:230,h:36,type:'email',   t1:'Résiliation abonnement',  t2:'Email rétention · offre de pause ?'},
+    // ── Convergence Pack + Membre : Milestones ──
+    {x:310,y:1290,w:260,h:40,type:'key',     t1:'Milestones visites',      t2:'Programme de fidélité · gamification'},
+    {x:180,y:1370,w:220,h:40,type:'email',   t1:'Milestone 1 · X visites', t2:'Récompense 1 · à définir avec la boss'},
+    {x:420,y:1370,w:220,h:40,type:'email',   t1:'Milestone 2 · XX visites',t2:'Récompense 2 · à définir avec la boss'},
+    {x:300,y:1450,w:250,h:36,type:'todo',    t1:'Suite milestones',        t2:'Programme complet · à définir'},
+  ],initEdges:[
+    [0,1,null],[1,2,null],[2,3,'Non'],[2,4,'Oui'],
+    [4,5,'Abo'],[4,6,'Pack'],[4,7,'Séance'],
+    [5,8,null],[6,8,null],[7,8,null],[8,9,null],
+    [9,10,'Oui'],[9,11,'Non'],[11,12,null],
+    [12,13,'Oui'],[12,14,'Annule'],[13,15,null],[10,15,null],
+    [15,16,null],[16,17,'Oui'],[16,18,'Non'],
+    [18,19,null],[19,20,'Oui'],[19,21,'Non'],
+    [20,22,null],[21,22,null],
+    // Inactif
+    [22,23,'Inactif — pas de séances'],[23,24,null],[24,25,null],
+    // Pack
+    [22,26,'A un pack'],
+    // Membre
+    [22,27,'Membre actif'],[27,28,null],[27,29,null],
+    // Convergence Milestones
+    [26,30,null],[27,30,null],
+    [30,31,null],[30,32,null],
+    [31,33,null],[32,33,null]
+  ]},
+  {nodes:[
+    {x:200,y:20,w:260,h:40,type:'key',t1:'Membre invite un guest',t2:'sur sa session'},
+    {x:185,y:90,w:290,h:36,type:'decision',t1:'Session disponible ?',t2:'place libre ou liste d\'attente'},
+    {x:430,y:150,w:210,h:50,type:'email',t1:'Invitation envoyée',t2:'→ Guest : infos · → Membre : confirmé'},
+    {x:430,y:230,w:210,h:36,type:'decision',t1:'Annulation ?',t2:'avant la session'},
+    {x:560,y:290,w:90,h:50,type:'email',t1:'Annulation',t2:'Guest + Membre'},
+    {x:430,y:290,w:120,h:36,type:'key',t1:'Session ✓',t2:''},
+    {x:20,y:150,w:200,h:50,type:'email',t1:'Mise en liste d\'attente',t2:'→ Guest · → Membre'},
+    {x:20,y:230,w:200,h:36,type:'decision',t1:'Place se libère ?',t2:''},
+    {x:20,y:290,w:200,h:50,type:'email',t1:'Place obtenue',t2:'→ Guest : 🎉 · → Membre : confirmé'},
+    {x:70,y:390,w:190,h:36,type:'email',t1:'Annulation liste d\'attente',t2:'Guest + Membre'},
+    {x:360,y:460,w:280,h:50,type:'todo',t1:'Post-session J+1',t2:'Guest rejoint le parcours client'},
+    {x:360,y:540,w:280,h:36,type:'decision',t1:'Le guest s\'inscrit ?',t2:''},
+    {x:360,y:605,w:280,h:36,type:'key',t1:'Rejoint le parcours client',t2:'New Registration → funnel standard'},
+    {x:140,y:605,w:200,h:36,type:'decision',t1:'Sortie propre',t2:'pas de relance sans inscription'},
+  ],initEdges:[[0,1,null],[1,2,'Oui — place libre'],[2,3,null],[3,4,'Oui'],[3,5,'Non'],[1,6,'Non — liste attente'],[6,7,null],[7,8,'Oui'],[8,10,null],[10,11,null],[11,12,'Oui'],[11,13,'Non']]},
+  {nodes:[
+    {x:200,y:20,w:260,h:40,type:'key',t1:'Achat d\'une carte cadeau',t2:'par un acheteur'},
+    {x:160,y:90,w:340,h:50,type:'todo',t1:'Confirmation achat',t2:'Acheteur · Non trouvé dans MT — à créer'},
+    {x:160,y:170,w:340,h:36,type:'email',t1:'Bénéficiaire reçoit la carte',t2:'Gift Card Notification'},
+    {x:185,y:236,w:290,h:36,type:'decision',t1:'Active-t-il la carte ?',t2:'réservation dans les jours suivants'},
+    {x:430,y:290,w:220,h:50,type:'key',t1:'Rejoint le parcours client',t2:'New Registration → funnel standard'},
+    {x:20,y:290,w:200,h:36,type:'todo',t1:'Relance J+14',t2:'"Votre cadeau vous attend"'},
+    {x:20,y:356,w:200,h:36,type:'decision',t1:'Active ?',t2:''},
+    {x:20,y:422,w:200,h:36,type:'todo',t1:'Relance expiration J+XX',t2:'Urgence douce'},
+    {x:20,y:488,w:200,h:36,type:'decision',t1:'Toujours inactive ?',t2:''},
+    {x:44,y:554,w:160,h:36,type:'decision',t1:'Carte expirée',t2:'Sortie propre'},
+  ],initEdges:[[0,1,null],[1,2,null],[2,3,null],[3,4,'Oui'],[3,5,'Non'],[5,6,null],[6,7,'Non'],[6,4,'Oui →'],[7,8,null],[8,9,'Oui — expirée']]},
+  {nodes:[
+    {x:190,y:20,w:280,h:40,type:'decision',t1:'Emails techniques',t2:'automatiques ou manuels'},
+    {x:20,y:160,w:96,h:50,type:'email',t1:'Password Reset',t2:'À habiller'},
+    {x:128,y:160,w:96,h:50,type:'email',t1:'Autopay Failure',t2:'CTA : màj CB'},
+    {x:236,y:160,w:96,h:50,type:'todo',t1:'Customer Waiver',t2:'À créer'},
+    {x:344,y:160,w:96,h:50,type:'ok',t1:'Vat Invoice',t2:'Garder'},
+    {x:452,y:160,w:96,h:50,type:'ok',t1:'Chargeback',t2:'Garder'},
+    {x:560,y:160,w:96,h:50,type:'email',t1:'Customer Comm.',t2:'Manuel'},
+  ],initEdges:[[0,1,null],[0,2,null],[0,3,null],[0,4,null],[0,5,null],[0,6,null]]},
+];
+
+/* ═══════════════════════════════════════
+   DUAL TREES (Guest + Carte cadeau)
+═══════════════════════════════════════ */
+const DUAL_TREES={
+  1:{
+    left:{title:'FLUX GUEST',subtitle:'Ce que reçoit la personne invitée',color:'#6C1412',
+      nodes:[
+        // 0 — point d'entrée
+        {x:140,y:10, w:220,h:34,type:'key',     t1:'Le guest est invité',              t2:'par un membre'},
+        // 1 — décision bifurquante
+        {x:140,y:64, w:220,h:36,type:'decision', t1:'Session disponible ?',             t2:"place libre ou liste d'attente"},
+        // 2 — branche droite : place confirmée
+        {x:300,y:150,w:220,h:36,type:'email',    t1:'Invitation — place confirmée',     t2:"Infos · ce qu'il faut apporter"},
+        // 3 — nœud de convergence des deux branches
+        {x:140,y:310,w:220,h:36,type:'decision', t1:'Annulation avant la session ?',   t2:''},
+        // 4 — sortie : annulation
+        {x:330,y:390,w:200,h:36,type:'email',    t1:'Annulation — par le membre',       t2:'Session annulée'},
+        // 5 — sortie : session
+        {x:140,y:390,w:180,h:36,type:'key',      t1:'Session ✓',                        t2:''},
+        // 6 — branche gauche : liste d'attente
+        {x:10, y:150,w:210,h:36,type:'email',    t1:"Liste d'attente — ajout",          t2:"On te prévient dès qu'une place se libère"},
+        // 7
+        {x:10, y:210,w:210,h:36,type:'decision', t1:'Place se libère ?',               t2:''},
+        // 8 — place obtenue → rejoint le nœud 3
+        {x:10, y:270,w:210,h:36,type:'email',    t1:"Place obtenue — liste d'attente", t2:'Bonne nouvelle 🎉'},
+        // 9 — sortie définitive liste d'attente annulée
+        {x:10, y:390,w:210,h:36,type:'email',    t1:"Liste d'attente — annulation",    t2:'Retrait · message bienveillant'},
+        // 10 — post-session
+        {x:140,y:460,w:200,h:40,type:'todo',     t1:'Post-session J+1',                 t2:"Invitation à s'inscrire"},
+      ],
+      initEdges:[
+        [0,1,null],
+        [1,2,'Oui — place libre'],
+        [1,6,"Non — liste d'attente"],
+        [2,3,null],
+        [6,7,null],
+        [7,8,'Oui'],
+        [7,9,'Non'],
+        [8,3,'→ place confirmée'],
+        [3,4,'Oui — annulée'],
+        [3,5,'Non → session'],
+        [5,10,null]
+      ]
+    },
+    right:{title:'FLUX MEMBRE QUI INVITE',subtitle:'Ce que reçoit la personne qui invite',color:'#993C1D',
+      nodes:[
+        // 0
+        {x:130,y:10, w:240,h:34,type:'key',      t1:'Le membre invite un guest',             t2:''},
+        // 1 — décision bifurquante
+        {x:130,y:64, w:240,h:36,type:'decision',  t1:'Session disponible ?',                  t2:"place libre ou liste d'attente"},
+        // 2 — branche droite : place confirmée
+        {x:300,y:150,w:230,h:36,type:'email',     t1:'Guest inscrit — confirmation',          t2:'Ton guest est bien inscrit ✓'},
+        // 3 — nœud de convergence
+        {x:130,y:310,w:240,h:36,type:'decision',  t1:'Le guest annule ?',                     t2:'avant la session'},
+        // 4 — sortie : annulation
+        {x:340,y:390,w:210,h:36,type:'email',     t1:'Annulation — guest annule',             t2:'Annulée · inviter un autre ?'},
+        // 5 — sortie : session
+        {x:130,y:390,w:200,h:36,type:'key',       t1:'Session ✓',                             t2:''},
+        // 6 — branche gauche : liste d'attente
+        {x:10, y:150,w:220,h:36,type:'email',     t1:"Liste d'attente — ajout guest",         t2:"Guest en liste d'attente"},
+        // 7
+        {x:10, y:210,w:220,h:36,type:'decision',  t1:'Place se libère ?',                     t2:''},
+        // 8 — place obtenue → rejoint nœud 3
+        {x:10, y:270,w:220,h:36,type:'email',     t1:"Guest obtient sa place",                t2:'Ton guest a sa place ✓'},
+        // 9 — sortie liste d'attente annulée
+        {x:10, y:390,w:220,h:36,type:'email',     t1:"Liste d'attente — annulation guest",    t2:"Ton invité retiré de la liste"},
+        // 10 — à investiguer
+        {x:130,y:460,w:240,h:36,type:'decision',  t1:'Appointment Confirmation - Guest ?',    t2:'À investiguer — 1:1 vs groupe ?'},
+      ],
+      initEdges:[
+        [0,1,null],
+        [1,2,'Oui — place libre'],
+        [1,6,"Non — liste d'attente"],
+        [2,3,null],
+        [6,7,null],
+        [7,8,'Oui'],
+        [7,9,'Non'],
+        [8,3,'→ invitation confirmée'],
+        [3,4,'Oui — annule'],
+        [3,5,'Non → session'],
+        [5,10,null]
+      ]
+    }
+  },
+  2:{
+    left:{title:'FLUX ACHETEUR',subtitle:'Ce que reçoit la personne qui offre',color:'#6C1412',
+      nodes:[
+        {x:30,y:16,w:200,h:34,type:'key',t1:"Achat d'une carte cadeau",t2:''},
+        {x:10,y:70,w:240,h:40,type:'todo',t1:'Confirmation achat',t2:'Non trouvé dans Marianatek — à créer'},
+        {x:10,y:130,w:240,h:30,type:'decision',t1:'Envoi immédiat ou différé ?',t2:''},
+        {x:10,y:200,w:240,h:30,type:'todo',t1:'Email envoi différé',t2:'Lien pour envoyer + imprimer'},
+      ],
+      initEdges:[[0,1,null],[1,2,null],[2,3,'Différé']]
+    },
+    right:{title:'FLUX BÉNÉFICIAIRE',subtitle:'Ce que reçoit la personne qui reçoit la carte',color:'#993C1D',
+      nodes:[
+        {x:30,y:16,w:200,h:34,type:'key',t1:'La carte est reçue',t2:'par le bénéficiaire'},
+        {x:10,y:70,w:240,h:30,type:'email',t1:'Réception carte cadeau',t2:'Gift Card Notification · Code + lien'},
+        {x:10,y:120,w:240,h:30,type:'decision',t1:'Active-t-il la carte ?',t2:'réservation dans les jours suivants'},
+        {x:10,y:172,w:240,h:34,type:'key',t1:'Rejoint le parcours client',t2:'New Registration → funnel standard'},
+        {x:10,y:240,w:240,h:30,type:'todo',t1:'Relance non-activation J+14',t2:'"Votre cadeau vous attend"'},
+        {x:10,y:290,w:240,h:30,type:'decision',t1:'Active ?',t2:''},
+        {x:10,y:340,w:240,h:30,type:'todo',t1:'Relance expiration J+XX',t2:'Urgence douce · dernier rappel'},
+        {x:10,y:390,w:240,h:30,type:'decision',t1:'Toujours inactive ?',t2:''},
+        {x:10,y:440,w:240,h:30,type:'decision',t1:'Carte expirée',t2:'Sortie propre de la liste'},
+      ],
+      initEdges:[[0,1,null],[1,2,null],[2,3,'Oui'],[2,4,'Non'],[4,5,null],[5,6,'Non'],[5,3,'Oui →'],[6,7,null],[7,8,'Oui — expirée']]
+    }
+  }
+};
+
+function isDual(){return !!(DUAL_TREES[tab]);}
+
+function findNodeDualTree(nodeId){
+  if(!isDual()) return null;
+  const d=DUAL_TREES[tab];
+  if(d.left.nodes.find(n=>n.id===nodeId)) return d.left;
+  if(d.right.nodes.find(n=>n.id===nodeId)) return d.right;
+  return null;
+}
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let tab=0, selId=null, currentView='table', searchQ='';
+let collapsedSecs=new Set();
+const NS='http://www.w3.org/2000/svg';
+let idCtr=2000;
+function newId(){return 'n'+(idCtr++);}
+
+// Tree state
+let selectedNodeId=null, selectedEdgeId=null, selectedEdgeTree=null;
+let connectMode=false, connectSourceId=null;
+let drawingEdge=null;
+let tepRow=null, tepNode=null, tepVer='v1', diffMode=false;
+let modalId=null, editingNodeRef=null;
+let addTargetTree=null;
+let ctxTargetId=null, activeCtxTree=null;
+let elpEdge=null;
+// Zoom/pan
+let vpX=30, vpY=30, vpZ=1;
+
+/* ═══════════════════════════════════════
+   COLORS
+═══════════════════════════════════════ */
+const C={
+  email:   {fill:'#DBEAFE',stroke:'#2563EB',t1:'#1E40AF',label:'À personnaliser',cls:'b-e'},
+  todo:    {fill:'#FFF7ED',stroke:'#EA580C',t1:'#9A3412',label:'À créer',        cls:'b-t'},
+  decision:{fill:'#F1EFE8',stroke:'#B4B2A9',t1:'#5F5E5A',label:'À investiguer', cls:'b-d'},
+  key:     {fill:'#6C1412',stroke:'#6C1412',t1:'#fff',   label:'Étape clé',      cls:'b-k'},
+  ok:      {fill:'#EAF3DE',stroke:'#3B6D11',t1:'#27500A',label:'Garder',         cls:'b-o'},
+};
+
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function mkEl(tag,attrs){
+  const el=document.createElementNS(NS,tag);
+  for(const[k,v] of Object.entries(attrs)) el.setAttribute(k,String(v));
+  return el;
+}
+function findRow(id){
+  for(const s of TABS[tab].sections) for(const r of s.rows) if(r.id===id) return r;
+  return null;
+}
+function findRowInfo(id){
+  for(let si=0;si<TABS[tab].sections.length;si++){
+    const s=TABS[tab].sections[si];
+    for(let ri=0;ri<s.rows.length;ri++) if(s.rows[ri].id===id) return{s,si,ri};
+  }
+  return null;
+}
+function findDups(){
+  const subs={},cons={},dups=new Set();
+  TABS[tab].sections.forEach(s=>s.rows.forEach(r=>{
+    const sub=(r.subject||'').trim(),con=(r.content||'').trim();
+    if(sub){if(subs[sub]){dups.add(r.id);dups.add(subs[sub]);}else subs[sub]=r.id;}
+    if(con&&con.length>10){if(cons[con]){dups.add(r.id);dups.add(cons[con]);}else cons[con]=r.id;}
+  }));
+  return dups;
+}
+function svgCoord(e){
+  const wrap=document.getElementById('tree-canvas-wrap');
+  const rect=wrap.getBoundingClientRect();
+  return{x:(e.clientX-rect.left-vpX)/vpZ, y:(e.clientY-rect.top-vpY)/vpZ};
+}
+
+/* ═══════════════════════════════════════
+   STATS BAR
+═══════════════════════════════════════ */
+function renderStats(){
+  const bar=document.getElementById('statsbar');
+  const counts={email:0,todo:0,decision:0,key:0,ok:0};
+  let total=0;
+  TABS[tab].sections.forEach(s=>s.rows.forEach(r=>{counts[r.type]=(counts[r.type]||0)+1;total++;}));
+  const labels={email:'À personnaliser',todo:'À créer',decision:'À investiguer',key:'Étapes clés',ok:'Garder'};
+  const cls={email:'s-email',todo:'s-todo',decision:'s-decision',key:'s-key',ok:'s-ok'};
+  bar.innerHTML='';
+  Object.entries(counts).filter(([,v])=>v>0).forEach(([k,v])=>{
+    const chip=document.createElement('span');
+    chip.className=`stat-chip ${cls[k]}`;
+    chip.innerHTML=`<span class="count">${v}</span> ${labels[k]}`;
+    bar.appendChild(chip);
+  });
+  const tot=document.createElement('span');
+  tot.className='stat-total';
+  tot.textContent=`${total} email${total>1?'s':''} au total`;
+  bar.appendChild(tot);
+}
+
+/* ═══════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════ */
+function onSearch(){
+  searchQ=document.getElementById('search-input').value.toLowerCase();
+  document.getElementById('search-clear').style.display=searchQ?'block':'none';
+  render();
+}
+function clearSearch(){
+  searchQ='';
+  document.getElementById('search-input').value='';
+  document.getElementById('search-clear').style.display='none';
+  render();
+}
+function matchesSearch(r){
+  if(!searchQ) return true;
+  return [r.t1,r.t2,r.subject,r.content,r.notes,r.mt,r.to].some(v=>(v||'').toLowerCase().includes(searchQ));
+}
+
+/* ═══════════════════════════════════════
+   TABLE
+═══════════════════════════════════════ */
+function render(){
+  renderStats();
+  const t=TABS[tab];
+  const dups=findDups();
+  const left=document.getElementById('left');
+  left.innerHTML='';
+  const hasSplit=t.sections.some(s=>s.split);
+  document.getElementById('right').style.display=hasSplit?'none':'flex';
+
+  if(hasSplit){
+    const wrap=document.createElement('div');wrap.className='split-wrap';
+    const lefts=t.sections.filter(s=>s.split==='left');
+    const rights=t.sections.filter(s=>s.split==='right');
+    [lefts[0],rights[0]].filter(Boolean).forEach(side=>{
+      const panel=document.createElement('div');panel.className='split-panel';
+      const hdr=document.createElement('div');hdr.className='split-header';
+      hdr.style.background=side.color||'#6C1412';
+      hdr.innerHTML=`${side.title} <span style="font-weight:400;opacity:.7;font-size:11px;margin-left:8px">${side.tag}</span>`;
+      panel.appendChild(hdr);
+      panel.appendChild(buildTable(side.rows,dups,true));
+      wrap.appendChild(panel);
+    });
+    left.appendChild(wrap);
+  } else {
+    if(dups.size&&!searchQ){
+      const b=document.createElement('div');b.className='dup-banner';
+      b.textContent='⚠ Contenu potentiellement dupliqué — lignes surlignées en jaune.';
+      left.appendChild(b);
+    }
+    t.sections.forEach((s,si)=>{
+      const key=`${tab}-${si}`;
+      const isOpen=!collapsedSecs.has(key);
+      const filtered=searchQ?s.rows.filter(matchesSearch):s.rows;
+      if(searchQ&&filtered.length===0) return;
+      const wrap=document.createElement('div');wrap.className='section-wrap';
+      // Header
+      const hdr=document.createElement('div');hdr.className='section-hdr';
+      hdr.onclick=()=>{collapsedSecs.has(key)?collapsedSecs.delete(key):collapsedSecs.add(key);render();};
+      const arrow=document.createElement('span');arrow.className='sec-arrow'+(isOpen?' open':'');arrow.textContent='▶';
+      const title=document.createElement('span');title.className='sec-title';title.textContent=s.title;
+      // Editable title on double-click
+      title.ondblclick=(e)=>{e.stopPropagation();makeSecTitleEditable(title,s);};
+      const tag=document.createElement('span');tag.className='sec-tag';tag.textContent=s.tag;
+      const cnt=document.createElement('span');cnt.className='sec-count';cnt.textContent=`(${s.rows.length})`;
+      const addBtn=document.createElement('button');addBtn.className='sec-add-btn';
+      addBtn.textContent='＋ Ajouter';addBtn.onclick=(e)=>{e.stopPropagation();addRowToSection(tab,si);};
+      hdr.append(arrow,title,tag,cnt,addBtn);
+      wrap.appendChild(hdr);
+      // Body
+      const body=document.createElement('div');body.className='section-body'+(isOpen?'':' collapsed');
+      const rows=searchQ?filtered:s.rows;
+      body.appendChild(buildTable(rows,dups,false));
+      wrap.appendChild(body);
+      left.appendChild(wrap);
+    });
+    // Add section button
+    const addSecRow=document.createElement('div');addSecRow.className='add-section-row';
+    const addSecBtn=document.createElement('button');addSecBtn.textContent='＋ Ajouter une section';
+    addSecBtn.onclick=()=>openSecModal(tab);
+    addSecRow.appendChild(addSecBtn);left.appendChild(addSecRow);
+  }
+}
+
+function makeSecTitleEditable(el,s){
+  const old=el.textContent;
+  el.contentEditable='true';el.focus();
+  const sel=window.getSelection();sel.selectAllChildren(el);
+  const done=()=>{
+    el.contentEditable='false';
+    s.title=el.textContent.trim()||old;
+    markSaved();render();
+  };
+  el.onblur=done;
+  el.onkeydown=(e)=>{if(e.key==='Enter'){e.preventDefault();done();}if(e.key==='Escape'){el.textContent=old;done();}};
+}
+
+function buildTable(rows,dups,inPanel){
+  const outer=document.createElement('div');outer.className='tbl-wrap';
+  if(!rows.length){const e=document.createElement('div');e.className='no-results';e.textContent='Aucun email dans cette section.';outer.appendChild(e);return outer;}
+  const tbl=document.createElement('table');
+  const thead=document.createElement('thead');
+  thead.innerHTML=`<tr>
+    ${inPanel?'':'<th style="width:20px"></th>'}
+    <th>Nom</th>${inPanel?'':'<th>Destinataire</th>'}
+    <th>Statut</th><th>Nom Marianatek</th><th>Objet email</th><th>Contenu clé</th><th>Notes</th><th style="width:28px"></th>
+  </tr>`;
+  tbl.appendChild(thead);
+  const tbody=document.createElement('tbody');
+  rows.forEach(r=>{
+    const isDup=dups.has(r.id);const c=C[r.type]||C.email;
+    const tr=document.createElement('tr');
+    if(r.id===selId) tr.classList.add('sel');
+    if(isDup) tr.classList.add('dup-row');
+    if(!inPanel){
+      const tdDrag=document.createElement('td');tdDrag.className='td-drag';tdDrag.textContent='⠿';
+      tdDrag.draggable=true;
+      tdDrag.addEventListener('dragstart',(e)=>{e.dataTransfer.setData('text/plain',r.id);tr.classList.add('drag-ghost');});
+      tdDrag.addEventListener('dragend',()=>tr.classList.remove('drag-ghost'));
+      tr.appendChild(tdDrag);
+    }
+    tr.innerHTML+=(isDup?`<td class="cn">${r.t1}<span class="dup-flag">doublon ?</span></td>`:`<td class="cn">${r.t1}</td>`)
+      +(inPanel?'':(`<td class="cto">${r.to||'<span class="empty">—</span>'}</td>`))
+      +`<td><span class="badge ${c.cls}">${c.label}</span></td>`
+      +`<td class="cmt">${r.mt||'<span class="empty">—</span>'}</td>`
+      +`<td class="csub">${r.subject||'<span class="empty">À définir</span>'}</td>`
+      +`<td class="ccont">${r.content||'<span class="empty">À définir</span>'}</td>`
+      +`<td class="cnotes">${r.notes||''}</td>`;
+    const tdDel=document.createElement('td');tdDel.className='td-del';
+    const delBtn=document.createElement('button');delBtn.className='btn-row-del';delBtn.textContent='🗑';delBtn.title='Supprimer';
+    delBtn.addEventListener('click',(e)=>{e.stopPropagation();deleteRowById(r.id);});
+    tdDel.appendChild(delBtn);tr.appendChild(tdDel);
+    tr.addEventListener('click',(e)=>{if(e.target.classList.contains('td-drag')||e.target.classList.contains('btn-row-del'))return;if(inPanel)openModal(r.id);else selectRow(r.id);});
+    tr.addEventListener('dragover',(e)=>{e.preventDefault();tr.classList.add('drag-over');});
+    tr.addEventListener('dragleave',()=>tr.classList.remove('drag-over'));
+    tr.addEventListener('drop',(e)=>{
+      e.preventDefault();tr.classList.remove('drag-over');
+      const srcId=e.dataTransfer.getData('text/plain');
+      if(srcId&&srcId!==r.id) moveRowBefore(srcId,r.id);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);outer.appendChild(tbl);return outer;
+}
+
+function moveRowBefore(srcId,targetId){
+  for(const s of TABS[tab].sections){
+    const si=s.rows.findIndex(r=>r.id===srcId);
+    const ti=s.rows.findIndex(r=>r.id===targetId);
+    if(si>=0&&ti>=0){
+      const [row]=s.rows.splice(si,1);
+      const newTi=s.rows.findIndex(r=>r.id===targetId);
+      s.rows.splice(newTi,0,row);
+      markSaved();render();return;
+    }
+  }
+}
+
+/* ─── Section modal ─── */
+let secModalTargetTab=null;
+function openSecModal(ti){secModalTargetTab=ti;document.getElementById('sec-title').value='';document.getElementById('sec-tag').value='';document.getElementById('sec-overlay').classList.add('open');}
+function closeSecModal(){document.getElementById('sec-overlay').classList.remove('open');}
+function confirmSecModal(){
+  const title=document.getElementById('sec-title').value.trim();
+  if(!title)return;
+  TABS[secModalTargetTab].sections.push({title,tag:document.getElementById('sec-tag').value.trim()||'',rows:[]});
+  closeSecModal();render();markSaved();
+}
+
+/* ─── Add Tab ─── */
+function addTab(){
+  const name=prompt('Nom du nouvel onglet :');
+  if(!name)return;
+  TABS.push({label:name,sections:[{title:'Nouvelles étapes',tag:'',rows:[]}]});
+  TREES.push({nodes:[{x:100,y:100,w:200,h:40,type:'key',t1:name,t2:''}],initEdges:[]});
+  const topbar=document.querySelector('.topbar');
+  const addBtn=topbar.querySelector('.tab-add');
+  const newTab=document.createElement('button');
+  newTab.className='ttab';newTab.textContent=name;
+  const idx=TABS.length-1;
+  newTab.onclick=()=>switchTab(idx);
+  topbar.insertBefore(newTab,addBtn);
+  switchTab(idx);
+}
+
+/* ─── Row CRUD ─── */
+function addRowToSection(ti,si){
+  const r={id:'r'+Date.now(),type:'todo',t1:'Nouvelle étape',t2:'',to:'',mt:'—',subject:'',content:'',notes:''};
+  TABS[ti].sections[si].rows.push(r);
+  selId=r.id;render();selectRow(r.id);
+}
+function selectRow(id){
+  selId=id;const r=findRow(id);if(!r)return;
+  if(TABS[tab].sections.some(s=>s.split)){openModal(id);return;}
+  const c=C[r.type];
+  document.getElementById('right').style.display='flex';
+  document.getElementById('ep-empty').style.display='none';
+  const f=document.getElementById('ep-form');f.style.display='flex';f.style.flexDirection='column';f.style.height='100%';
+  document.getElementById('ep-badge').textContent=c.label;
+  document.getElementById('ep-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
+  document.getElementById('ep-title').textContent=r.t1;
+  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=r[k]||'';});
+  render();
+}
+function liveUp(){
+  if(!selId)return;const r=findRow(selId);if(!r)return;
+  r.t1=document.getElementById('f-t1').value;r.t2=document.getElementById('f-t2').value;r.type=document.getElementById('f-type').value;
+  const c=C[r.type];
+  document.getElementById('ep-title').textContent=r.t1;
+  document.getElementById('ep-badge').textContent=c.label;
+  document.getElementById('ep-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
+  render();
+}
+function saveEdit(){
+  if(!selId)return;const r=findRow(selId);if(!r)return;
+  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)r[k]=el.value;});
+  markSaved();render();
+}
+function deleteRow(){
+  if(!selId)return;deleteRowById(selId);
+}
+/* ─── Sync helpers ─── */
+function syncDeleteTreeNode(name){
+  if(!name) return;
+  function purge(t){
+    if(!t||!t.nodes) return;
+    const ids=t.nodes.filter(n=>n.t1===name).map(n=>n.id);
+    if(!ids.length) return;
+    t.nodes=t.nodes.filter(n=>n.t1!==name);
+    if(t.edges) t.edges=t.edges.filter(e=>!ids.includes(e.from)&&!ids.includes(e.to));
+  }
+  if(isDual()){purge(DUAL_TREES[tab].left);purge(DUAL_TREES[tab].right);}
+  else purge(TREES[tab]);
+}
+function syncDeleteTableRow(name){
+  if(!name) return;
+  TABS[tab].sections.forEach(s=>{
+    const idx=s.rows.findIndex(r=>r.t1===name);
+    if(idx>=0) s.rows.splice(idx,1);
+  });
+}
+
+function deleteRowById(id){
+  const info=findRowInfo(id);if(!info)return;
+  const name=info.s.rows[info.ri].t1;
+  if(!confirm(`Supprimer "${name}" du tableau et de l'arbre ?`))return;
+  info.s.rows.splice(info.ri,1);
+  syncDeleteTreeNode(name);
+  if(id===selId)closeEdit();else{markSaved();render();}
+}
+function deleteModalRow(){
+  const tgt=document.getElementById('modal-overlay')._target;
+  if(tgt==='row'&&modalId){closeModal();deleteRowById(modalId);}
+}
+function closeEdit(){
+  selId=null;
+  document.getElementById('ep-empty').style.display='flex';
+  document.getElementById('ep-form').style.display='none';
+  if(TABS[tab].sections.some(s=>s.split)) document.getElementById('right').style.display='none';
+  render();
+}
+
+/* ─── Modal ─── */
+function openModal(id){
+  modalId=id;const r=findRow(id);if(!r)return;
+  const c=C[r.type];
+  document.getElementById('m-badge').textContent=c.label;
+  document.getElementById('m-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
+  document.getElementById('m-title').textContent=r.t1;
+  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('m-'+k);if(el)el.value=r[k]||'';});
+  document.getElementById('modal-overlay')._target='row';
+  document.getElementById('modal-del-btn').style.display='';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function openNodeEditModal(n){
+  editingNodeRef=n;const c=C[n.type];
+  document.getElementById('m-badge').textContent=c.label;
+  document.getElementById('m-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
+  document.getElementById('m-title').textContent=n.t1;
+  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('m-'+k);if(el)el.value=n[k]||'';});
+  document.getElementById('modal-overlay')._target='node';
+  document.getElementById('modal-del-btn').style.display='none';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function saveModal(){
+  const tgt=document.getElementById('modal-overlay')._target;
+  const src=tgt==='node'?editingNodeRef:(modalId?findRow(modalId):null);
+  if(!src)return;
+  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('m-'+k);if(el)src[k]=el.value;});
+  if(tgt==='node'){editingNodeRef=null;markSaved();closeModal();refreshTree();}
+  else{markSaved();closeModal();}
+}
+function closeModal(){
+  modalId=null;editingNodeRef=null;
+  document.getElementById('modal-overlay')._target=null;
+  document.getElementById('modal-overlay').classList.remove('open');
+  if(currentView==='table')render();else refreshTree();
+}
+
+/* ═══════════════════════════════════════
+   TREE ENGINE
+═══════════════════════════════════════ */
+function initTree(t){
+  if(t._init) return;
+  t.nodes.forEach(n=>{if(!n.id)n.id=newId();});
+  t.edges=(t.initEdges||[]).map(([fi,ti,lbl])=>{
+    const f=t.nodes[fi],to=t.nodes[ti];if(!f||!to)return null;
+    return{id:newId(),from:f.id,to:to.id,label:lbl||null};
+  }).filter(Boolean);
+  t._init=true;
+}
+
+function getTree(){
+  if(isDual()) return findNodeDualTree(selectedNodeId)||activeCtxTree||DUAL_TREES[tab].left;
+  return TREES[tab];
+}
+
+function initDualTrees(){
+  if(!isDual()) return;
+  ['left','right'].forEach(side=>{
+    const t=DUAL_TREES[tab][side];
+    if(t._init) return;
+    t.nodes.forEach(n=>{if(!n.id)n.id=newId();});
+    t.edges=(t.initEdges||[]).map(([fi,ti,lbl])=>{
+      const f=t.nodes[fi],to=t.nodes[ti];if(!f||!to)return null;
+      return{id:newId(),from:f.id,to:to.id,label:lbl||null};
+    }).filter(Boolean);
+    t._init=true;
+  });
+}
+
+function refreshTree(){
+  if(isDual()){refreshDualTree();return;}
+  const t=TREES[tab];if(!t)return;
+  initTree(t);
+  const vp=document.getElementById('tree-vp');
+  if(!vp)return;
+  vp.innerHTML='';
+  const W=Math.max(...t.nodes.map(n=>n.x+n.w),700)+80;
+  const H=Math.max(...t.nodes.map(n=>n.y+n.h),400)+80;
+  drawAllEdges(t,vp);
+  t.nodes.forEach(n=>vp.appendChild(buildNode(n,t)));
+  const ghost=mkEl('line',{x1:0,y1:0,x2:0,y2:0,stroke:'#6C1412','stroke-width':'2','stroke-dasharray':'5 3',
+    'marker-end':'url(#arr-sel)','pointer-events':'none',opacity:0});
+  ghost.id='ghost-line';vp.appendChild(ghost);
+  const ly=H-10;
+  [{c:'#6C1412',l:'Étape clé'},{c:'#993C1D',l:'À personnaliser'},{c:'#A32D2D',l:'À créer'},
+   {c:'#888780',l:'À investiguer'},{c:'#3B6D11',l:'Garder'}].reduce((lx,{c,l})=>{
+    vp.appendChild(mkEl('circle',{cx:lx+4,cy:ly,r:4,fill:c}));
+    const tx=mkEl('text',{x:lx+12,y:ly,'dominant-baseline':'central','font-size':9,fill:'#999','font-family':'-apple-system,sans-serif'});
+    tx.textContent=l;vp.appendChild(tx);return lx+l.length*5+18;
+  },10);
+  updateVP();
+}
+
+function refreshDualTree(){
+  initDualTrees();
+  const vp=document.getElementById('tree-vp');
+  if(!vp) return;
+  vp.innerHTML='';
+
+  const dual=DUAL_TREES[tab];
+  const GAP=48;
+  const HEADER=38;
+  const PAD=16;
+
+  // Compute sizes for each side
+  function treeSize(t){
+    const W=Math.max(...t.nodes.map(n=>n.x+n.w),260)+PAD*2;
+    const H=Math.max(...t.nodes.map(n=>n.y+n.h),300)+PAD*2+HEADER;
+    return{W,H};
+  }
+  const ls=treeSize(dual.left), rs=treeSize(dual.right);
+  const rightOffX=ls.W+GAP;
+  const totalW=rightOffX+rs.W;
+  const totalH=Math.max(ls.H,rs.H)+40;
+
+  // ── LEFT SIDE ──
+  const lg=mkEl('g',{});
+  // header background
+  lg.appendChild(mkEl('rect',{x:0,y:0,width:ls.W,height:HEADER,rx:6,fill:dual.left.color}));
+  const lt1=mkEl('text',{x:12,y:HEADER/2,'dominant-baseline':'central','font-size':12,'font-weight':600,fill:'#fff','font-family':'-apple-system,sans-serif'});
+  lt1.textContent=dual.left.title; lg.appendChild(lt1);
+  const lt2=mkEl('text',{x:ls.W-10,y:HEADER/2,'dominant-baseline':'central','font-size':10,fill:'rgba(255,255,255,.65)','font-family':'-apple-system,sans-serif','text-anchor':'end'});
+  lt2.textContent=dual.left.subtitle; lg.appendChild(lt2);
+  // nodes & edges in offset group
+  const lcg=mkEl('g',{transform:`translate(${PAD},${HEADER+PAD})`});
+  drawAllEdges(dual.left,lcg);
+  dual.left.nodes.forEach(n=>lcg.appendChild(buildNode(n,dual.left)));
+  lg.appendChild(lcg);
+  vp.appendChild(lg);
+
+  // ── SEPARATOR ──
+  const sep=mkEl('line',{x1:ls.W+GAP/2,y1:0,x2:ls.W+GAP/2,y2:totalH-30,stroke:'rgba(0,0,0,.08)','stroke-width':1,'stroke-dasharray':'4 4'});
+  vp.appendChild(sep);
+
+  // ── RIGHT SIDE ──
+  const rg=mkEl('g',{transform:`translate(${rightOffX},0)`});
+  rg.appendChild(mkEl('rect',{x:0,y:0,width:rs.W,height:HEADER,rx:6,fill:dual.right.color}));
+  const rt1=mkEl('text',{x:12,y:HEADER/2,'dominant-baseline':'central','font-size':12,'font-weight':600,fill:'#fff','font-family':'-apple-system,sans-serif'});
+  rt1.textContent=dual.right.title; rg.appendChild(rt1);
+  const rt2=mkEl('text',{x:rs.W-10,y:HEADER/2,'dominant-baseline':'central','font-size':10,fill:'rgba(255,255,255,.65)','font-family':'-apple-system,sans-serif','text-anchor':'end'});
+  rt2.textContent=dual.right.subtitle; rg.appendChild(rt2);
+  const rcg=mkEl('g',{transform:`translate(${PAD},${HEADER+PAD})`});
+  drawAllEdges(dual.right,rcg);
+  dual.right.nodes.forEach(n=>rcg.appendChild(buildNode(n,dual.right)));
+  rg.appendChild(rcg);
+  vp.appendChild(rg);
+
+  // ── Ghost line ──
+  const ghost=mkEl('line',{x1:0,y1:0,x2:0,y2:0,stroke:'#6C1412','stroke-width':'2','stroke-dasharray':'5 3',
+    'marker-end':'url(#arr-sel)','pointer-events':'none',opacity:0});
+  ghost.id='ghost-line'; vp.appendChild(ghost);
+
+  // ── Legend ──
+  const ly=totalH-10;
+  [{c:'#6C1412',l:'Étape clé'},{c:'#993C1D',l:'À personnaliser'},{c:'#A32D2D',l:'À créer'},
+   {c:'#888780',l:'À investiguer'},{c:'#3B6D11',l:'Garder'}].reduce((lx,{c,l})=>{
+    vp.appendChild(mkEl('circle',{cx:lx+4,cy:ly,r:4,fill:c}));
+    const tx=mkEl('text',{x:lx+12,y:ly,'dominant-baseline':'central','font-size':9,fill:'#999','font-family':'-apple-system,sans-serif'});
+    tx.textContent=l; vp.appendChild(tx); return lx+l.length*5+18;
+  },10);
+
+  updateVP();
+}
+
+/* ─── SVG DEFS (called once) ─── */
+function ensureDefs(){
+  const svg=document.getElementById('tree-svg');
+  if(svg.querySelector('defs'))return;
+  const defs=mkEl('defs',{});
+  [['arr','#C4C2B9'],['arr-sel','#6C1412']].forEach(([id,col])=>{
+    const mk=mkEl('marker',{id,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto-start-reverse'});
+    const mp=mkEl('path',{d:'M2 1L8 5L2 9',fill:'none',stroke:col,'stroke-width':'1.5','stroke-linecap':'round','stroke-linejoin':'round'});
+    mk.appendChild(mp);defs.appendChild(mk);
+  });
+  svg.insertBefore(defs,svg.firstChild);
+}
+
+function drawAllEdges(tree,g){
+  if(!tree.edges)return;
+  tree.edges.forEach(edge=>{
+    const from=tree.nodes.find(n=>n.id===edge.from);
+    const to=tree.nodes.find(n=>n.id===edge.to);
+    if(!from||!to)return;
+    const isSel=edge.id===selectedEdgeId;
+    const fx=from.x+from.w/2, fy=from.y+from.h;
+    const tx=to.x+to.w/2,   ty=to.y;
+    const dy=ty-fy;
+    let d;
+    if(Math.abs(fx-tx)<5&&dy>0){d=`M${fx},${fy} L${tx},${ty}`;}
+    else if(dy>24){const cp=Math.max(40,Math.abs(dy)*.4);d=`M${fx},${fy} C${fx},${fy+cp} ${tx},${ty-cp} ${tx},${ty}`;}
+    else{const mid=fy+Math.max(20,Math.abs(dy)*.5+20);d=`M${fx},${fy} L${fx},${mid} L${tx},${mid} L${tx},${ty}`;}
+    const col=isSel?'#6C1412':'#C4C2B9';
+    const hit=mkEl('path',{d,fill:'none',stroke:'transparent','stroke-width':'14',cursor:'pointer'});
+    hit.addEventListener('click',(e)=>{e.stopPropagation();selectEdge(edge.id,tree);});
+    hit.addEventListener('dblclick',(e)=>{e.stopPropagation();openElp(edge,e.clientX,e.clientY);});
+    g.appendChild(hit);
+    const vis=mkEl('path',{d,fill:'none',stroke:col,'stroke-width':isSel?2:1.25,
+      'marker-end':`url(#${isSel?'arr-sel':'arr'})`,'pointer-events':'none'});
+    g.appendChild(vis);
+    if(edge.label){
+      const mx=(fx+tx)/2,my=fy+(ty-fy)*.5;
+      const lw=edge.label.length*6+14;
+      g.appendChild(mkEl('rect',{x:mx-lw/2,y:my-9,width:lw,height:17,rx:4,fill:'#fff',stroke:col,'stroke-width':.5,'pointer-events':'none'}));
+      const lt=mkEl('text',{x:mx,y:my+1,'text-anchor':'middle','dominant-baseline':'central','font-size':10,fill:'#666',
+        'font-family':'-apple-system,sans-serif','font-style':'italic','pointer-events':'none'});
+      lt.textContent=edge.label;g.appendChild(lt);
+    }
+  });
+}
+
+/* ─── TREE EMAIL PANEL ─── */
+/* ─── DIFF helpers ─── */
+function tokenize(text){
+  // Split on whitespace, keeping whitespace tokens so formatting is preserved
+  return (text||'').split(/(\s+)/);
+}
+function wordDiff(a,b){
+  const tokA=tokenize(a), tokB=tokenize(b);
+  const m=tokA.length, n=tokB.length;
+  // Safety cap — beyond 3000 tokens just show full replacement
+  if(m>3000||n>3000) return [{type:'del',text:a},{type:'ins',text:b}];
+  // LCS DP
+  const dp=new Array(m+1);
+  for(let i=0;i<=m;i++){dp[i]=new Int32Array(n+1);}
+  for(let i=1;i<=m;i++)
+    for(let j=1;j<=n;j++)
+      dp[i][j]=tokA[i-1]===tokB[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  // Backtrack
+  const diff=[];
+  let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&tokA[i-1]===tokB[j-1]){diff.unshift({type:'eq',text:tokA[i-1]});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){diff.unshift({type:'ins',text:tokB[j-1]});j--;}
+    else{diff.unshift({type:'del',text:tokA[i-1]});i--;}
+  }
+  // Merge consecutive same-type tokens for cleaner HTML
+  const merged=[];
+  for(const d of diff){
+    if(merged.length&&merged[merged.length-1].type===d.type) merged[merged.length-1].text+=d.text;
+    else merged.push({type:d.type,text:d.text});
+  }
+  return merged;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function diffToHtml(diff){
+  return diff.map(d=>{
+    if(d.type==='eq') return esc(d.text);
+    if(d.type==='ins') return `<ins class="d-ins">${esc(d.text)}</ins>`;
+    return `<del class="d-del">${esc(d.text)}</del>`;
+  }).join('');
+}
+function renderDiff(){
+  if(!diffMode)return;
+  const v1b=document.getElementById('tep-v1-body').value;
+  const v2b=document.getElementById('tep-v2-body').value;
+  const v1s=document.getElementById('tep-v1-subj').value;
+  const v2s=document.getElementById('tep-v2-subj').value;
+  document.getElementById('diff-view').innerHTML=diffToHtml(wordDiff(v1b,v2b));
+  document.getElementById('diff-subj-view').innerHTML=diffToHtml(wordDiff(v1s,v2s));
+}
+function setDiffMode(on){
+  diffMode=on;
+  const btn=document.getElementById('tep-diff-btn');
+  const dv=document.getElementById('diff-view');
+  const ds=document.getElementById('diff-subj-view');
+  const leg=document.getElementById('diff-legend');
+  const v2body=document.getElementById('tep-v2-body');
+  const v2subj=document.getElementById('tep-v2-subj');
+  btn.classList.toggle('active',on);
+  dv.classList.toggle('on',on);
+  ds.classList.toggle('on',on);
+  if(leg) leg.style.display=on?'flex':'none';
+  v2body.style.display=on?'none':'';
+  v2subj.style.display=on?'none':'';
+  if(on) renderDiff();
+}
+function toggleDiff(){setDiffMode(!diffMode);}
+
+function findRowForNode(n){
+  for(const s of TABS[tab].sections){
+    const r=s.rows.find(r=>r.t1===n.t1);
+    if(r)return r;
+  }
+  return null;
+}
+
+function getEffectiveType(row){
+  if(!row) return 'todo';
+  const has=!!(row.v1?.content||'').trim()||!!(row.v2?.content||'').trim();
+  return has?'email':'todo';
+}
+
+function showTep(n){
+  tepNode=n;
+  const row=findRowForNode(n);
+  tepRow=row;
+  if(!row&&n.type!=='email'&&n.type!=='todo'){
+    // Decision/key nodes: just show name without edit
+  }
+  if(row){
+    if(!row.v1) row.v1={subject:'',content:''};
+    if(!row.v2) row.v2={subject:'',content:''};
+  }
+  const panel=document.getElementById('tree-email-panel');
+  panel.classList.add('tep-open');
+  const dispType=row?getEffectiveType(row):(n.type==='email'?'email':'todo');
+  const c=C[dispType]||C.todo;
+  const badge=document.getElementById('tep-badge');
+  badge.textContent=c.label;
+  badge.style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
+  document.getElementById('tep-name').textContent=n.t1;
+  document.getElementById('tep-mt-lbl').textContent=row?.mt&&row.mt!=='—'?'· '+row.mt:'';
+  document.getElementById('tep-v1-subj').value=row?.v1?.subject||'';
+  document.getElementById('tep-v1-body').value=row?.v1?.content||'';
+  document.getElementById('tep-v2-subj').value=row?.v2?.subject||'';
+  document.getElementById('tep-v2-body').value=row?.v2?.content||'';
+  document.getElementById('tep-notes-ta').value=row?.notes||'';
+  document.getElementById('tep-saved').classList.remove('show');
+  // Reset diff mode on each new node
+  setDiffMode(false);
+}
+
+function saveTep(){
+  if(!tepRow){return;}
+  tepRow.v1={subject:document.getElementById('tep-v1-subj').value.trim(),content:document.getElementById('tep-v1-body').value};
+  tepRow.v2={subject:document.getElementById('tep-v2-subj').value.trim(),content:document.getElementById('tep-v2-body').value};
+  tepRow.notes=document.getElementById('tep-notes-ta').value;
+  // Sync subject/content for table view
+  if(tepRow.v1.subject) tepRow.subject=tepRow.v1.subject;
+  if(tepRow.v1.content) tepRow.content=tepRow.v1.content;
+  // Show saved indicator
+  const saved=document.getElementById('tep-saved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'),2000);
+  markSaved();
+  // Refresh tree node color if type changed
+  refreshTree();
+}
+
+function closeTep(){
+  setDiffMode(false);
+  document.getElementById('tree-email-panel').classList.remove('tep-open');
+  tepRow=null;tepNode=null;
+}
+
+// Resize handle + diff input listeners
+(function(){
+  let resizing=false,startX=0,startW=0;
+  document.addEventListener('DOMContentLoaded',()=>{
+    // Re-render diff on any V1 or V2 change
+    ['tep-v1-body','tep-v2-body','tep-v1-subj','tep-v2-subj'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.addEventListener('input',()=>{ if(diffMode) renderDiff(); });
+    });
+    const handle=document.getElementById('tep-resize');
+    const panel=document.getElementById('tree-email-panel');
+    if(!handle||!panel)return;
+    handle.addEventListener('mousedown',(e)=>{
+      resizing=true;startX=e.clientX;startW=panel.offsetWidth;
+      handle.classList.add('dragging');
+      document.body.style.cursor='ew-resize';
+      document.body.style.userSelect='none';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove',(e)=>{
+      if(!resizing)return;
+      const delta=startX-e.clientX;
+      panel.style.width=Math.max(360,Math.min(1100,startW+delta))+'px';
+    });
+    document.addEventListener('mouseup',()=>{
+      if(!resizing)return;
+      resizing=false;
+      handle.classList.remove('dragging');
+      document.body.style.cursor='';
+      document.body.style.userSelect='';
+    });
+  });
+})();
+
+function buildNode(n,nodeTree){
+  const row=(n.type==='email'||n.type==='todo')?findRowForNode(n):null;
+  const dispType=(n.type==='email'||n.type==='todo')?getEffectiveType(row):n.type;
+  const c=C[dispType]||C.todo;const isKey=n.type==='key';
+  const isSel=n.id===selectedNodeId;const isSrc=connectMode&&connectSourceId===n.id;
+  const g=mkEl('g',{class:'node-g','data-id':n.id});
+  if(isSel||isSrc){
+    g.appendChild(mkEl('rect',{x:n.x-3,y:n.y-3,width:n.w+6,height:n.h+6,rx:isKey?23:9,
+      fill:'none',stroke:isSrc?'#3B6D11':'#6C1412','stroke-width':2,'stroke-dasharray':isSrc?'5 3':'0'}));
+  }
+  g.appendChild(mkEl('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:isKey?20:6,fill:c.fill,stroke:c.stroke,'stroke-width':.75}));
+  const cy=n.t2?n.y+n.h*.36:n.y+n.h/2;
+  const t1=mkEl('text',{x:n.x+n.w/2,y:cy,'text-anchor':'middle','dominant-baseline':'central',
+    'font-size':11,'font-weight':500,fill:c.t1,'font-family':'-apple-system,sans-serif','pointer-events':'none'});
+  t1.textContent=n.t1;g.appendChild(t1);
+  if(n.t2){
+    const t2=mkEl('text',{x:n.x+n.w/2,y:n.y+n.h*.70,'text-anchor':'middle','dominant-baseline':'central',
+      'font-size':9.5,fill:isKey?'#F5C4B3':c.stroke,'font-family':'-apple-system,sans-serif','pointer-events':'none'});
+    t2.textContent=n.t2;g.appendChild(t2);
+  }
+  // Anchor dots
+  [{ax:n.x+n.w/2,ay:n.y},{ax:n.x+n.w/2,ay:n.y+n.h},{ax:n.x,ay:n.y+n.h/2},{ax:n.x+n.w,ay:n.y+n.h/2}].forEach(({ax,ay})=>{
+    const a=mkEl('circle',{cx:ax,cy:ay,r:5,fill:'#fff',stroke:'#6C1412','stroke-width':1.5,class:'anchor',cursor:'crosshair',opacity:0});
+    a.addEventListener('mouseenter',()=>{a.setAttribute('r',6);a.setAttribute('fill','#6C1412');});
+    a.addEventListener('mouseleave',()=>{a.setAttribute('r',5);a.setAttribute('fill','#fff');});
+    a.addEventListener('mousedown',(e)=>{e.stopPropagation();e.preventDefault();startAnchorDrag(n,ax,ay,nodeTree);});
+    g.appendChild(a);
+  });
+  g.addEventListener('mouseenter',()=>{if(!drawingEdge)g.querySelectorAll('.anchor').forEach(a=>a.setAttribute('opacity',1));});
+  g.addEventListener('mouseleave',(e)=>{
+    if(e.relatedTarget&&e.relatedTarget.classList&&e.relatedTarget.classList.contains('anchor'))return;
+    g.querySelectorAll('.anchor').forEach(a=>a.setAttribute('opacity',0));
+  });
+  // Drag node
+  g.addEventListener('mousedown',(e)=>{
+    if(e.button===2||e.target.classList.contains('anchor'))return;
+    e.stopPropagation();
+    if(connectMode){handleConnectClick(n,nodeTree);return;}
+    selectedNodeId=n.id;selectedEdgeId=null;selectedEdgeTree=null;
+    if(nodeTree) activeCtxTree=nodeTree;
+    document.getElementById('btn-del-node').disabled=false;
+    document.getElementById('btn-del-edge').style.display='none';
+    const start=svgCoord(e);
+    const ox=start.x-n.x,oy=start.y-n.y;
+    let moved=false;
+    const onMove=(ev)=>{const p=svgCoord(ev);n.x=Math.max(0,Math.round(p.x-ox));n.y=Math.max(0,Math.round(p.y-oy));moved=true;refreshTree();};
+    const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);if(!moved){refreshTree();showTep(n);}};
+    document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+    refreshTree();
+  });
+  g.addEventListener('dblclick',(e)=>{e.stopPropagation();openNodeEditModal(n);});
+  g.addEventListener('contextmenu',(e)=>{
+    e.preventDefault();e.stopPropagation();
+    ctxTargetId=n.id;activeCtxTree=nodeTree||TREES[tab];
+    const m=document.getElementById('ctx-menu');
+    m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';
+    m.classList.add('open');
+    setTimeout(()=>document.addEventListener('click',()=>m.classList.remove('open'),{once:true}),10);
+  });
+  return g;
+}
+
+/* ─── Anchor drag ─── */
+function startAnchorDrag(fromNode,ax,ay,nodeTree){
+  const ghost=document.getElementById('ghost-line');
+  ghost.setAttribute('x1',ax);ghost.setAttribute('y1',ay);
+  ghost.setAttribute('x2',ax);ghost.setAttribute('y2',ay);
+  ghost.setAttribute('opacity',1);
+  drawingEdge={fromNode};
+  const onMove=(e)=>{const p=svgCoord(e);ghost.setAttribute('x2',p.x);ghost.setAttribute('y2',p.y);};
+  const onUp=(e)=>{
+    document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);
+    ghost.setAttribute('opacity',0);drawingEdge=null;
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const ng=el&&el.closest('[data-id]');
+    if(ng){
+      const tid=ng.getAttribute('data-id');
+      const t=nodeTree||(isDual()?findNodeDualTree(fromNode.id):null)||TREES[tab];
+      if(tid&&tid!==fromNode.id&&t){
+        if(!t.edges)t.edges=[];
+        if(!t.edges.some(ed=>ed.from===fromNode.id&&ed.to===tid))
+          t.edges.push({id:newId(),from:fromNode.id,to:tid,label:null});
+      }
+    }
+    refreshTree();
+  };
+  document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+}
+
+/* ─── Connect mode ─── */
+function toggleConnectMode(){
+  connectMode=!connectMode;connectSourceId=null;
+  document.getElementById('btn-connect').classList.toggle('active',connectMode);
+  document.getElementById('tree-hint').textContent=connectMode
+    ?'🔗 Cliquez sur le nœud SOURCE, puis sur la CIBLE. Échap pour annuler.'
+    :'Scroll = zoom · Drag fond = déplacer · Ancres ● = connecter · Double-clic = modifier · Clic droit = menu';
+  refreshTree();
+}
+function handleConnectClick(node,nodeTree){
+  const t=nodeTree||getTree();
+  if(!connectSourceId){connectSourceId=node.id;selectedNodeId=node.id;if(nodeTree)activeCtxTree=nodeTree;}
+  else if(connectSourceId===node.id){connectSourceId=null;selectedNodeId=null;}
+  else{
+    if(!t.edges)t.edges=[];
+    if(!t.edges.some(e=>e.from===connectSourceId&&e.to===node.id))
+      t.edges.push({id:newId(),from:connectSourceId,to:node.id,label:null});
+    connectSourceId=null;toggleConnectMode();
+  }
+  refreshTree();
+}
+
+/* ─── Edge selection ─── */
+function selectEdge(eid,tree){
+  if(selectedEdgeId===eid){selectedEdgeId=null;selectedEdgeTree=null;document.getElementById('btn-del-edge').style.display='none';}
+  else{selectedEdgeId=eid;selectedEdgeTree=tree;selectedNodeId=null;document.getElementById('btn-del-node').disabled=true;document.getElementById('btn-del-edge').style.display='';}
+  refreshTree();
+}
+function deleteSelectedEdge(){
+  if(!selectedEdgeId||!selectedEdgeTree)return;
+  selectedEdgeTree.edges=selectedEdgeTree.edges.filter(e=>e.id!==selectedEdgeId);
+  selectedEdgeId=null;selectedEdgeTree=null;document.getElementById('btn-del-edge').style.display='none';refreshTree();
+}
+function deleteSelectedNode(){
+  if(!selectedNodeId)return;
+  if(!confirm('Supprimer ce nœud ?'))return;
+  const t=isDual()?(findNodeDualTree(selectedNodeId)||activeCtxTree||DUAL_TREES[tab].left):TREES[tab];
+  const name=t.nodes.find(n=>n.id===selectedNodeId)?.t1;
+  t.nodes=t.nodes.filter(n=>n.id!==selectedNodeId);
+  if(t.edges)t.edges=t.edges.filter(e=>e.from!==selectedNodeId&&e.to!==selectedNodeId);
+  syncDeleteTableRow(name);
+  selectedNodeId=null;document.getElementById('btn-del-node').disabled=true;refreshTree();
+}
+
+/* ─── Add node ─── */
+function addNode(){
+  if(isDual()) initDualTrees(); else initTree(TREES[tab]);
+  document.getElementById('add-t1').value='';document.getElementById('add-t2').value='';
+  document.getElementById('add-type').value='todo';
+  // Show side selector only for dual tabs
+  document.getElementById('add-side-wrap').style.display=isDual()?'block':'none';
+  // Default selected side = same as activeCtxTree or left
+  if(isDual()){
+    const dual=DUAL_TREES[tab];
+    const defaultSide=(activeCtxTree===dual.right)?'right':'left';
+    document.getElementById('add-side').value=defaultSide;
+  }
+  const hasSel=!!selectedNodeId;
+  document.getElementById('add-connect-wrap').style.display=hasSel?'block':'none';
+  document.getElementById('add-connect').checked=hasSel;
+  document.getElementById('add-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('add-t1').focus(),50);
+}
+function closeAddModal(){document.getElementById('add-overlay').classList.remove('open');}
+function confirmAddNode(){
+  const t1=document.getElementById('add-t1').value.trim()||'Nouveau nœud';
+  const t2=document.getElementById('add-t2').value.trim();
+  const type=document.getElementById('add-type').value;
+  const shouldConnect=document.getElementById('add-connect').checked;
+  // Resolve target tree
+  let tt;
+  if(isDual()){
+    const side=document.getElementById('add-side').value;
+    tt=DUAL_TREES[tab][side];
+    activeCtxTree=tt;
+  } else {
+    tt=TREES[tab];
+  }
+  const maxY=tt.nodes.reduce((m,n)=>Math.max(m,n.y+n.h),0);
+  const nn={id:newId(),x:180,y:maxY+30,w:200,h:36,type,t1,t2,to:'',mt:'',subject:'',content:'',notes:''};
+  tt.nodes.push(nn);
+  if(!tt.edges)tt.edges=[];
+  if(shouldConnect&&selectedNodeId&&tt.nodes.find(n=>n.id===selectedNodeId))
+    tt.edges.push({id:newId(),from:selectedNodeId,to:nn.id,label:null});
+  selectedNodeId=nn.id;
+  closeAddModal();refreshTree();
+}
+
+/* ─── Context menu ─── */
+function ctxEdit(){document.getElementById('ctx-menu').classList.remove('open');const n=getTree().nodes.find(x=>x.id===ctxTargetId);if(n)openNodeEditModal(n);}
+function ctxConnectFrom(){
+  document.getElementById('ctx-menu').classList.remove('open');
+  if(!connectMode)toggleConnectMode();
+  connectSourceId=ctxTargetId;selectedNodeId=ctxTargetId;refreshTree();
+}
+function ctxDuplicate(){
+  document.getElementById('ctx-menu').classList.remove('open');
+  const t=getTree();const n=t.nodes.find(x=>x.id===ctxTargetId);if(!n)return;
+  t.nodes.push({...n,id:newId(),x:n.x+30,y:n.y+60});refreshTree();
+}
+function ctxDelete(){
+  document.getElementById('ctx-menu').classList.remove('open');
+  const t=getTree();
+  const name=t.nodes.find(n=>n.id===ctxTargetId)?.t1;
+  t.nodes=t.nodes.filter(n=>n.id!==ctxTargetId);
+  if(t.edges)t.edges=t.edges.filter(e=>e.from!==ctxTargetId&&e.to!==ctxTargetId);
+  syncDeleteTableRow(name);
+  if(selectedNodeId===ctxTargetId){selectedNodeId=null;document.getElementById('btn-del-node').disabled=true;}
+  ctxTargetId=null;refreshTree();
+}
+
+/* ─── Edge label ─── */
+function openElp(edge,cx,cy){
+  elpEdge=edge;
+  const p=document.getElementById('elp');
+  document.getElementById('elp-input').value=edge.label||'';
+  p.style.left=cx+'px';p.style.top=cy+'px';p.classList.add('open');
+  document.getElementById('elp-input').focus();
+}
+function saveEdgeLabel(){if(!elpEdge)return;elpEdge.label=document.getElementById('elp-input').value.trim()||null;elpEdge=null;closeElp();refreshTree();}
+function deleteEdgeLabel(){if(elpEdge)elpEdge.label=null;elpEdge=null;closeElp();refreshTree();}
+function closeElp(){elpEdge=null;document.getElementById('elp').classList.remove('open');}
+
+/* ═══════════════════════════════════════
+   ZOOM / PAN
+═══════════════════════════════════════ */
+function updateVP(){
+  vpZ=Math.max(0.1,Math.min(4,vpZ));
+  document.getElementById('tree-vp').setAttribute('transform',`translate(${vpX},${vpY}) scale(${vpZ})`);
+  document.getElementById('zoom-display').textContent=Math.round(vpZ*100)+'%';
+}
+function zoomBy(factor,cx,cy){
+  const wrap=document.getElementById('tree-canvas-wrap');
+  const rect=wrap.getBoundingClientRect();
+  const mx=cx!=null?cx-rect.left:rect.width/2;
+  const my=cy!=null?cy-rect.top:rect.height/2;
+  vpX=mx-factor*(mx-vpX);
+  vpY=my-factor*(my-vpY);
+  vpZ*=factor;updateVP();
+}
+function fitScreen(){
+  const wrap=document.getElementById('tree-canvas-wrap');
+  const rect=wrap.getBoundingClientRect();
+  let allNodes=[];
+  if(isDual()){
+    const d=DUAL_TREES[tab];
+    // Approximate combined width so fit encompasses both sides
+    const lW=Math.max(...d.left.nodes.map(n=>n.x+n.w),260)+80;
+    allNodes=[...d.left.nodes,...d.right.nodes.map(n=>({...n,x:n.x+lW+48}))];
+  } else {
+    allNodes=TREES[tab].nodes;
+  }
+  if(!allNodes.length)return;
+  const minX=Math.min(...allNodes.map(n=>n.x));
+  const minY=Math.min(...allNodes.map(n=>n.y));
+  const maxX=Math.max(...allNodes.map(n=>n.x+n.w));
+  const maxY=Math.max(...allNodes.map(n=>n.y+n.h));
+  const cw=maxX-minX+80,ch=maxY-minY+80;
+  const z=Math.min(.98,Math.min(rect.width/cw,rect.height/ch));
+  vpZ=z;vpX=rect.width/2-z*(minX+cw/2)+40*z;vpY=20;updateVP();
+}
+
+/* ─── SVG event handlers for pan / zoom ─── */
+function initSVGEvents(){
+  const svg=document.getElementById('tree-svg');
+  const wrap=document.getElementById('tree-canvas-wrap');
+  // Wheel zoom
+  wrap.addEventListener('wheel',(e)=>{
+    e.preventDefault();
+    const factor=e.deltaY<0?1.12:.89;
+    zoomBy(factor,e.clientX,e.clientY);
+  },{passive:false});
+  // Pan on background drag
+  let panning=false,panStart={x:0,y:0},panOrigin={x:0,y:0};
+  svg.addEventListener('mousedown',(e)=>{
+    if(e.target!==svg&&!e.target.id.startsWith('tree-'))return;
+    if(e.target!==svg)return;
+    panning=true;panStart={x:e.clientX,y:e.clientY};panOrigin={x:vpX,y:vpY};
+    svg.style.cursor='grabbing';
+  });
+  document.addEventListener('mousemove',(e)=>{
+    if(!panning)return;
+    vpX=panOrigin.x+(e.clientX-panStart.x);
+    vpY=panOrigin.y+(e.clientY-panStart.y);
+    updateVP();
+  });
+  document.addEventListener('mouseup',()=>{panning=false;if(document.getElementById('tree-svg'))document.getElementById('tree-svg').style.cursor='default';});
+}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
+function toggleHelp(){
+  const b=document.getElementById('help-bar');
+  b.classList.toggle('open');b.classList.toggle('closed');
+}
+function switchTab(i){
+  tab=i;selId=null;selectedNodeId=null;selectedEdgeId=null;selectedEdgeTree=null;activeCtxTree=null;
+  if(connectMode)toggleConnectMode();
+  document.querySelectorAll('.ttab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.getElementById('btn-del-node').disabled=true;
+  document.getElementById('btn-del-edge').style.display='none';
+  const hasSplit=TABS[i].sections.some(s=>s.split);
+  document.getElementById('right').style.display=hasSplit?'none':'flex';
+  document.getElementById('ep-empty').style.display='flex';
+  document.getElementById('ep-form').style.display='none';
+  vpX=30;vpY=30;vpZ=1;
+  if(currentView==='table')render();else refreshTree();
+}
+function switchView(v){
+  currentView=v;
+  document.getElementById('vt-table').classList.toggle('active',v==='table');
+  document.getElementById('vt-tree').classList.toggle('active',v==='tree');
+  document.getElementById('layout-table').style.display=v==='table'?'flex':'none';
+  document.getElementById('layout-tree').style.display=v==='tree'?'flex':'none';
+  document.getElementById('searchbar').classList.toggle('show',v==='table');
+  if(v==='table')render();else{ensureDefs();refreshTree();}
+}
+
+/* ═══════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════ */
+document.addEventListener('keydown',(e)=>{
+  const active=document.activeElement.tagName;
+  if(['INPUT','TEXTAREA','SELECT'].includes(active))return;
+  if(e.key==='Escape'){if(connectMode)toggleConnectMode();closeElp();}
+  if(currentView==='tree'){
+    if(e.key==='Delete'||e.key==='Backspace'){if(selectedEdgeId)deleteSelectedEdge();else if(selectedNodeId)deleteSelectedNode();}
+    if((e.key==='+'||e.key==='=')&&e.metaKey){e.preventDefault();zoomBy(1.2);}
+    if(e.key==='-'&&e.metaKey){e.preventDefault();zoomBy(.8);}
+    if(e.key==='0'&&e.metaKey){e.preventDefault();fitScreen();}
+  }
+  if(currentView==='table'&&(e.key==='f'||e.key==='F')&&(e.metaKey||e.ctrlKey)){
+    e.preventDefault();document.getElementById('search-input').focus();
+  }
+});
+
+/* ═══════════════════════════════════════
+   EXPORT / STORAGE
+═══════════════════════════════════════ */
+function markSaved(){
+  document.getElementById('saved').textContent='💾 '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  setTimeout(()=>document.getElementById('saved').textContent='',4000);
+}
+function exportCSV(){
+  const t=TABS[tab];
+  const rows=[['Nom','Nom Marianatek','Statut','Destinataire','Objet','Contenu clé','Notes']];
+  t.sections.forEach(s=>{rows.push([`=== ${s.title} ===`,'','','','','','']);s.rows.forEach(r=>rows.push([r.t1,r.mt,C[r.type].label,r.to,r.subject,r.content,r.notes]));});
+  const csv=rows.map(r=>r.map(c=>'"'+(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.download=`sant-roch-${TABS[tab].label.toLowerCase().replace(/ /g,'-')}.csv`;a.click();
+}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({TABS,TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[]}))},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sant-roch-funnel.json';a.click();
+}
+function saveToStorage(){
+  try{
+    localStorage.setItem('sant-roch-v6',JSON.stringify({
+      TABS,
+      TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[],_init:true}))
+    }));markSaved();
+  }catch(err){alert('Erreur localStorage');}
+}
+function loadFromStorage(){
+  try{
+    const raw=localStorage.getItem('sant-roch-v6');if(!raw)return;
+    const saved=JSON.parse(raw);
+    if(saved.TABS) saved.TABS.forEach((t,i)=>{
+      if(!TABS[i])return;
+      t.sections.forEach((s,si)=>{
+        if(!TABS[i].sections[si])return;
+        s.rows.forEach((r,ri)=>{if(TABS[i].sections[si].rows[ri])Object.assign(TABS[i].sections[si].rows[ri],r);});
+        if(s.rows.length>TABS[i].sections[si].rows.length)
+          TABS[i].sections[si].rows.push(...s.rows.slice(TABS[i].sections[si].rows.length));
+      });
+    });
+    if(saved.TREES) saved.TREES.forEach((t,i)=>{
+      if(TREES[i]&&t.nodes){TREES[i].nodes=t.nodes;TREES[i].edges=t.edges||[];TREES[i]._init=true;}
+    });
+  }catch(e){}
+}
+function resetAll(){
+  if(!confirm('Réinitialiser tous les changements ?'))return;
+  TABS.forEach((t,i)=>t.sections.forEach((s,si)=>{
+    const ors=orig[i]&&orig[i].sections[si];
+    if(ors){s.rows=JSON.parse(JSON.stringify(ors.rows));s.title=ors.title;s.tag=ors.tag;}
+  }));
+  TREES.forEach(t=>{delete t._init;delete t.edges;});
+  collapsedSecs.clear();closeEdit();closeModal();
+  if(currentView==='table')render();else{ensureDefs();refreshTree();}
+}
+
+document.addEventListener('click',()=>document.getElementById('ctx-menu').classList.remove('open'));
+document.getElementById('elp-input').addEventListener('keydown',(e)=>{if(e.key==='Enter')saveEdgeLabel();if(e.key==='Escape')closeElp();});
+
+/* ── INIT ── */
+loadFromStorage();
+TREES.forEach(t=>initTree(t));
+ensureDefs();
+initSVGEvents();
+render();
+</script>
+</body>
+</html>
