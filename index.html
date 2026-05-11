@@ -312,7 +312,9 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
 <header>
   <h1>Sant Roch — Funnel Email</h1>
   <div class="hbtns">
-    <span class="saved" id="saved"></span>
+    <span class="saved" id="autosave-ind" style="font-size:11px;opacity:.8;margin-right:4px"></span>
+    <button class="hbtn hg" id="btn-undo" onclick="undo()" disabled title="Annuler (⌘Z)">↩ Annuler</button>
+    <button class="hbtn hg" id="btn-redo" onclick="redo()" disabled title="Rétablir (⌘⇧Z)">↪ Rétablir</button>
     <button class="hbtn hg" id="btn-gh-save" onclick="saveToGitHub()">💾 Sauvegarder</button>
     <button class="hbtn hg" onclick="exportCSV()">↓ CSV</button>
     <button class="hbtn hg" onclick="exportJSON()">↓ JSON</button>
@@ -615,6 +617,43 @@ const GH_API='https://api.github.com/repos/imaruani/sant-roch-funnel/contents/da
 let ghSha=null;
 // Lance le fetch immédiatement (pendant que l'utilisateur tape son mdp)
 const _ghFetch=fetch(GH_API,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(r=>r.ok?r.json():null).catch(()=>null);
+
+/* ─── Undo / Redo ─── */
+let _undoStack=[],_redoStack=[];
+const MAX_UNDO=50;
+let _saveTimer=null;
+
+function _snap(){return JSON.stringify({TABS:JSON.parse(JSON.stringify(TABS)),TREES:JSON.parse(JSON.stringify(TREES))});}
+function pushUndo(){
+  _undoStack.push(_snap());
+  _redoStack=[];
+  if(_undoStack.length>MAX_UNDO)_undoStack.shift();
+  _updateUndoUI();
+}
+function _applySnap(snap){
+  const d=JSON.parse(snap);
+  if(d.TABS)d.TABS.forEach((t,i)=>{if(TABS[i])TABS[i].sections=JSON.parse(JSON.stringify(t.sections));});
+  if(d.TREES)d.TREES.forEach((t,i)=>{if(TREES[i]){TREES[i].nodes=t.nodes;TREES[i].edges=t.edges||[];if(t._init!==undefined)TREES[i]._init=t._init;}});
+  if(typeof closeTep==='function')closeTep();
+  if(typeof currentView!=='undefined')currentView==='table'?render():refreshTree();
+  _updateUndoUI();
+  scheduleGHSave();
+}
+function undo(){if(!_undoStack.length)return;_redoStack.push(_snap());_applySnap(_undoStack.pop());}
+function redo(){if(!_redoStack.length)return;_undoStack.push(_snap());_applySnap(_redoStack.pop());}
+function _updateUndoUI(){
+  const bu=document.getElementById('btn-undo'),br=document.getElementById('btn-redo');
+  if(bu){bu.disabled=!_undoStack.length;bu.title='Annuler (⌘Z)'+((_undoStack.length)?' · '+_undoStack.length+' action(s)':'');}
+  if(br){br.disabled=!_redoStack.length;}
+}
+
+/* ─── Auto-save (debounce 2s) ─── */
+function scheduleGHSave(){
+  const ind=document.getElementById('autosave-ind');
+  if(ind){ind.textContent='● Modification en attente…';ind.style.color='#B45309';}
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(saveToGitHub,2000);
+}
 
 /* ═══════════════════════════════════════
    DATA
@@ -1137,8 +1176,10 @@ function makeSecTitleEditable(el,s){
   const sel=window.getSelection();sel.selectAllChildren(el);
   const done=()=>{
     el.contentEditable='false';
+    if((el.textContent.trim()||old)===old)return;
+    pushUndo();
     s.title=el.textContent.trim()||old;
-    markSaved();render();
+    scheduleGHSave();render();
   };
   el.onblur=done;
   el.onkeydown=(e)=>{if(e.key==='Enter'){e.preventDefault();done();}if(e.key==='Escape'){el.textContent=old;done();}};
@@ -1197,10 +1238,11 @@ function moveRowBefore(srcId,targetId){
     const si=s.rows.findIndex(r=>r.id===srcId);
     const ti=s.rows.findIndex(r=>r.id===targetId);
     if(si>=0&&ti>=0){
+      pushUndo();
       const [row]=s.rows.splice(si,1);
       const newTi=s.rows.findIndex(r=>r.id===targetId);
       s.rows.splice(newTi,0,row);
-      markSaved();render();return;
+      scheduleGHSave();render();return;
     }
   }
 }
@@ -1212,8 +1254,9 @@ function closeSecModal(){document.getElementById('sec-overlay').classList.remove
 function confirmSecModal(){
   const title=document.getElementById('sec-title').value.trim();
   if(!title)return;
+  pushUndo();
   TABS[secModalTargetTab].sections.push({title,tag:document.getElementById('sec-tag').value.trim()||'',rows:[]});
-  closeSecModal();render();markSaved();
+  closeSecModal();render();scheduleGHSave();
 }
 
 /* ─── Add Tab ─── */
@@ -1262,8 +1305,9 @@ function liveUp(){
 }
 function saveEdit(){
   if(!selId)return;const r=findRow(selId);if(!r)return;
+  pushUndo();
   ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)r[k]=el.value;});
-  markSaved();render();
+  scheduleGHSave();render();
 }
 function deleteRow(){
   if(!selId)return;deleteRowById(selId);
@@ -1293,9 +1337,11 @@ function deleteRowById(id){
   const info=findRowInfo(id);if(!info)return;
   const name=info.s.rows[info.ri].t1;
   if(!confirm(`Supprimer "${name}" du tableau et de l'arbre ?`))return;
+  pushUndo();
   info.s.rows.splice(info.ri,1);
   syncDeleteTreeNode(name);
-  if(id===selId)closeEdit();else{markSaved();render();}
+  scheduleGHSave();
+  if(id===selId)closeEdit();else render();
 }
 function deleteModalRow(){
   const tgt=document.getElementById('modal-overlay')._target;
@@ -1335,9 +1381,11 @@ function saveModal(){
   const tgt=document.getElementById('modal-overlay')._target;
   const src=tgt==='node'?editingNodeRef:(modalId?findRow(modalId):null);
   if(!src)return;
+  pushUndo();
   ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('m-'+k);if(el)src[k]=el.value;});
-  if(tgt==='node'){editingNodeRef=null;markSaved();closeModal();refreshTree();}
-  else{markSaved();closeModal();}
+  scheduleGHSave();
+  if(tgt==='node'){editingNodeRef=null;closeModal();refreshTree();}
+  else{closeModal();}
 }
 function closeModal(){
   modalId=null;editingNodeRef=null;
@@ -1633,6 +1681,7 @@ function showTep(n){
 
 function saveTep(){
   if(!tepRow){return;}
+  pushUndo();
   tepRow.v1={subject:document.getElementById('tep-v1-subj').value.trim(),content:document.getElementById('tep-v1-body').value};
   tepRow.v2={subject:document.getElementById('tep-v2-subj').value.trim(),content:document.getElementById('tep-v2-body').value};
   tepRow.notes=document.getElementById('tep-notes-ta').value;
@@ -1643,8 +1692,7 @@ function saveTep(){
   const saved=document.getElementById('tep-saved');
   saved.classList.add('show');
   setTimeout(()=>saved.classList.remove('show'),2000);
-  markSaved();
-  // Refresh tree node color if type changed
+  scheduleGHSave();
   refreshTree();
 }
 
@@ -1732,9 +1780,9 @@ function buildNode(n,nodeTree){
     document.getElementById('btn-del-edge').style.display='none';
     const start=svgCoord(e);
     const ox=start.x-n.x,oy=start.y-n.y;
-    let moved=false;
-    const onMove=(ev)=>{const p=svgCoord(ev);n.x=Math.max(0,Math.round(p.x-ox));n.y=Math.max(0,Math.round(p.y-oy));moved=true;refreshTree();};
-    const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);if(!moved){refreshTree();showTep(n);}};
+    let moved=false,_undoPushed=false;
+    const onMove=(ev)=>{if(!_undoPushed){pushUndo();_undoPushed=true;}const p=svgCoord(ev);n.x=Math.max(0,Math.round(p.x-ox));n.y=Math.max(0,Math.round(p.y-oy));moved=true;refreshTree();};
+    const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);if(!moved){refreshTree();showTep(n);}else{scheduleGHSave();}};
     document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
     refreshTree();
   });
@@ -1791,10 +1839,12 @@ function handleConnectClick(node,nodeTree){
   if(!connectSourceId){connectSourceId=node.id;selectedNodeId=node.id;if(nodeTree)activeCtxTree=nodeTree;}
   else if(connectSourceId===node.id){connectSourceId=null;selectedNodeId=null;}
   else{
+    pushUndo();
     if(!t.edges)t.edges=[];
     if(!t.edges.some(e=>e.from===connectSourceId&&e.to===node.id))
       t.edges.push({id:newId(),from:connectSourceId,to:node.id,label:null});
     connectSourceId=null;toggleConnectMode();
+    scheduleGHSave();
   }
   refreshTree();
 }
@@ -1807,18 +1857,22 @@ function selectEdge(eid,tree){
 }
 function deleteSelectedEdge(){
   if(!selectedEdgeId||!selectedEdgeTree)return;
+  pushUndo();
   selectedEdgeTree.edges=selectedEdgeTree.edges.filter(e=>e.id!==selectedEdgeId);
-  selectedEdgeId=null;selectedEdgeTree=null;document.getElementById('btn-del-edge').style.display='none';refreshTree();
+  selectedEdgeId=null;selectedEdgeTree=null;document.getElementById('btn-del-edge').style.display='none';
+  scheduleGHSave();refreshTree();
 }
 function deleteSelectedNode(){
   if(!selectedNodeId)return;
   if(!confirm('Supprimer ce nœud ?'))return;
+  pushUndo();
   const t=isDual()?(findNodeDualTree(selectedNodeId)||activeCtxTree||DUAL_TREES[tab].left):TREES[tab];
   const name=t.nodes.find(n=>n.id===selectedNodeId)?.t1;
   t.nodes=t.nodes.filter(n=>n.id!==selectedNodeId);
   if(t.edges)t.edges=t.edges.filter(e=>e.from!==selectedNodeId&&e.to!==selectedNodeId);
   syncDeleteTableRow(name);
-  selectedNodeId=null;document.getElementById('btn-del-node').disabled=true;refreshTree();
+  selectedNodeId=null;document.getElementById('btn-del-node').disabled=true;
+  scheduleGHSave();refreshTree();
 }
 
 /* ─── Add node ─── */
@@ -1842,6 +1896,7 @@ function addNode(){
 }
 function closeAddModal(){document.getElementById('add-overlay').classList.remove('open');}
 function confirmAddNode(){
+  pushUndo();
   const t1=document.getElementById('add-t1').value.trim()||'Nouveau nœud';
   const t2=document.getElementById('add-t2').value.trim();
   const type=document.getElementById('add-type').value;
@@ -1862,7 +1917,7 @@ function confirmAddNode(){
   if(shouldConnect&&selectedNodeId&&tt.nodes.find(n=>n.id===selectedNodeId))
     tt.edges.push({id:newId(),from:selectedNodeId,to:nn.id,label:null});
   selectedNodeId=nn.id;
-  closeAddModal();refreshTree();
+  scheduleGHSave();closeAddModal();refreshTree();
 }
 
 /* ─── Context menu ─── */
@@ -2001,6 +2056,9 @@ function switchView(v){
 ═══════════════════════════════════════ */
 document.addEventListener('keydown',(e)=>{
   const active=document.activeElement.tagName;
+  // Undo / Redo — priorité absolue même dans les champs
+  if((e.metaKey||e.ctrlKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();undo();return;}
+  if((e.metaKey||e.ctrlKey)&&((e.key==='z'&&e.shiftKey)||(e.key==='y'))){e.preventDefault();redo();return;}
   if(['INPUT','TEXTAREA','SELECT'].includes(active))return;
   if(e.key==='Escape'){if(connectMode)toggleConnectMode();closeElp();}
   if(currentView==='tree'){
@@ -2018,8 +2076,9 @@ document.addEventListener('keydown',(e)=>{
    EXPORT / STORAGE
 ═══════════════════════════════════════ */
 function markSaved(){
-  document.getElementById('saved').textContent='💾 '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  setTimeout(()=>document.getElementById('saved').textContent='',4000);
+  const ind=document.getElementById('autosave-ind');
+  if(ind){ind.textContent='✓ Sauvegardé '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});ind.style.color='#3B6D11';}
+  setTimeout(()=>{if(ind&&ind.textContent.startsWith('✓'))ind.textContent='';},4000);
 }
 function exportCSV(){
   const t=TABS[tab];
