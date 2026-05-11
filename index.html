@@ -311,11 +311,8 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
   <div class="login-footer">Accès réservé à l'équipe Sant Roch</div>
 </div>
 
-<!-- LOADING OVERLAY (affiché pendant le fetch GitHub) -->
-<div id="gh-loading" style="position:fixed;inset:0;background:var(--cream);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px">
-  <div style="width:36px;height:36px;border:3px solid var(--bxl);border-top-color:var(--bx);border-radius:50%;animation:spin .7s linear infinite"></div>
-  <div style="font-size:13px;color:var(--muted)">Chargement des données…</div>
-</div>
+<!-- LOADING OVERLAY (caché par défaut, sync GitHub en arrière-plan) -->
+<div id="gh-loading" style="display:none"></div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <header>
@@ -2302,17 +2299,16 @@ async function saveToGitHub(){
 
 /* ── INIT ── */
 (async function(){
-  const ghLoading=document.getElementById('gh-loading');
-  // Attend le fetch GitHub lancé au démarrage
-  const raw=await _ghFetch;
-  const ok=await applyGHData(raw);
-  if(!ok){
-    // Pas de data.json encore — essaie le cache local, sinon données par défaut
-    const cache=localStorage.getItem('sant-roch-v6-cache');
-    if(cache) try{ const d=JSON.parse(cache); await applyGHData({sha:ghSha,content:btoa(unescape(encodeURIComponent(JSON.stringify(d))))}); }catch(e){}
-  }
-  // Cache le loading overlay
-  if(ghLoading) ghLoading.style.display='none';
+  try{
+    // Attend le fetch GitHub lancé au démarrage (max 10s)
+    const raw=await Promise.race([_ghFetch, new Promise(r=>setTimeout(()=>r(null),10000))]);
+    const ok=await applyGHData(raw);
+    if(!ok){
+      // Pas de data.json encore — essaie le cache local, sinon données par défaut
+      const cache=localStorage.getItem('sant-roch-v6-cache');
+      if(cache) try{ const d=JSON.parse(cache); await applyGHData({sha:ghSha,content:btoa(unescape(encodeURIComponent(JSON.stringify(d))))}); }catch(e){}
+    }
+  }catch(e){ console.warn('Init error:',e); }
   TREES.forEach(t=>initTree(t));
   ensureDefs();
   initSVGEvents();
