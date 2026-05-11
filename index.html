@@ -235,8 +235,8 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 /* TREE EMAIL PANEL */
 #tree-email-panel{width:700px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:none;flex-direction:column;overflow:hidden;position:relative;min-width:360px}
 #tree-email-panel.tep-open{display:flex}
-#tep-resize{position:absolute;left:0;top:0;bottom:0;width:5px;cursor:ew-resize;z-index:10;background:transparent}
-#tep-resize:hover,#tep-resize.dragging{background:var(--bxl)}
+#tep-resize{position:absolute;left:0;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:10;background:transparent;transition:background .15s}
+#tep-resize:hover,#tep-resize.dragging{background:var(--bxm);opacity:.35}
 .tep-head{padding:10px 16px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px}
 .tep-head-left{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
 .tep-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1740,18 +1740,17 @@ function closeTep(){
   tepRow=null;tepNode=null;
 }
 
-// Resize handle + diff input listeners
+// Resize handle + diff input listeners (script est en fin de body, DOM déjà prêt)
 (function(){
   let resizing=false,startX=0,startW=0;
-  document.addEventListener('DOMContentLoaded',()=>{
-    // Re-render diff on any V1 or V2 change
-    ['tep-v1-body','tep-v2-body','tep-v1-subj','tep-v2-subj'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.addEventListener('input',()=>{ if(diffMode) renderDiff(); });
-    });
-    const handle=document.getElementById('tep-resize');
-    const panel=document.getElementById('tree-email-panel');
-    if(!handle||!panel)return;
+  // Re-render diff on any V1 or V2 change
+  ['tep-v1-body','tep-v2-body','tep-v1-subj','tep-v2-subj'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input',()=>{ if(diffMode) renderDiff(); });
+  });
+  const handle=document.getElementById('tep-resize');
+  const panel=document.getElementById('tree-email-panel');
+  if(handle&&panel){
     handle.addEventListener('mousedown',(e)=>{
       resizing=true;startX=e.clientX;startW=panel.offsetWidth;
       handle.classList.add('dragging');
@@ -1762,7 +1761,7 @@ function closeTep(){
     document.addEventListener('mousemove',(e)=>{
       if(!resizing)return;
       const delta=startX-e.clientX;
-      panel.style.width=Math.max(360,Math.min(1100,startW+delta))+'px';
+      panel.style.width=Math.max(320,Math.min(1200,startW+delta))+'px';
     });
     document.addEventListener('mouseup',()=>{
       if(!resizing)return;
@@ -1771,7 +1770,7 @@ function closeTep(){
       document.body.style.cursor='';
       document.body.style.userSelect='';
     });
-  });
+  }
 })();
 
 function buildNode(n,nodeTree){
