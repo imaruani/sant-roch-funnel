@@ -276,40 +276,10 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
 .diff-legend{font-size:10px;color:var(--muted);margin-top:6px;display:flex;gap:10px;flex-shrink:0}
 .diff-legend span{display:flex;align-items:center;gap:3px}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--bx);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
-#login-screen.hidden{display:none}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px 36px;width:340px;display:flex;flex-direction:column;align-items:center;gap:0;box-shadow:0 32px 80px rgba(0,0,0,.35)}
-.login-logo{width:52px;height:52px;background:var(--bx);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px;color:#fff;font-weight:700;letter-spacing:-.5px}
-.login-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
-.login-input-wrap{width:100%;position:relative;margin-bottom:14px}
-.login-input{width:100%;font-size:14px;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;color:var(--text);background:var(--cream);outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s;letter-spacing:.12em}
-.login-input:focus{border-color:var(--bx);box-shadow:0 0 0 3px var(--bxl);background:#fff}
-.login-input.shake{animation:shake .35s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-.login-err{font-size:12px;color:var(--red);margin-bottom:10px;min-height:16px;text-align:center}
-.login-btn{width:100%;padding:12px;background:var(--bx);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s}
-.login-btn:hover{background:var(--bxd)}
-.login-footer{margin-top:20px;font-size:11px;color:rgba(255,255,255,.35);text-align:center}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">SR</div>
-    <div class="login-title">Sant Roch</div>
-    <div class="login-sub">Funnel Email — accès privé</div>
-    <div class="login-input-wrap">
-      <input class="login-input" id="login-input" type="password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
-    </div>
-    <div class="login-err" id="login-err"></div>
-    <button class="login-btn" onclick="submitLogin()">Accéder →</button>
-  </div>
-  <div class="login-footer">Accès réservé à l'équipe Sant Roch</div>
-</div>
 
 <!-- LOADING OVERLAY (caché par défaut, sync GitHub en arrière-plan) -->
 <div id="gh-loading" style="display:none"></div>
@@ -2265,37 +2235,6 @@ async function saveToGitHub(){
   }
 }
 
-/* ── LOGIN ── */
-(function(){
-  const KEY='sr-auth';
-  const PWD='ilanna';
-  function unlock(){
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('login-input').value='';
-  }
-  function submitLogin(){
-    const val=document.getElementById('login-input').value;
-    if(val===PWD){
-      localStorage.setItem(KEY,'1');
-      unlock();
-    } else {
-      const inp=document.getElementById('login-input');
-      document.getElementById('login-err').textContent='Mot de passe incorrect';
-      inp.classList.remove('shake');
-      void inp.offsetWidth; // reflow pour relancer l'anim
-      inp.classList.add('shake');
-      inp.value='';
-      setTimeout(()=>document.getElementById('login-err').textContent='',2500);
-    }
-  }
-  window.submitLogin=submitLogin;
-  // Auto-unlock si déjà authentifié
-  if(localStorage.getItem(KEY)==='1'){
-    unlock();
-  } else {
-    setTimeout(()=>document.getElementById('login-input').focus(),50);
-  }
-})();
 
 /* ── INIT ── */
 (async function(){
