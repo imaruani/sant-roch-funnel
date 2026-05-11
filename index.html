@@ -120,7 +120,7 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .add-section-row button:hover{background:var(--bxl);border-style:solid}
 
 /* RIGHT PANEL */
-.right{width:340px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.right{width:420px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
 .ep-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:8px;padding:40px;text-align:center}
 .ep-icon{font-size:28px;opacity:.2}
 .ep-form{display:none;flex-direction:column;height:100%}
@@ -138,6 +138,11 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sdiv{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding-top:13px;margin-bottom:9px;border-top:1px solid var(--border)}
 .ep-foot{padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:#fff;align-items:center}
+.ep-vertabs{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:12px}
+.ep-vertab{flex:1;font-size:12px;padding:6px 10px;background:transparent;border:none;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;text-align:center}
+.ep-vertab.active{background:var(--bx);color:#fff;font-weight:600}
+.ep-vertab:hover:not(.active){background:var(--beige)}
+.ep-ver-sub{font-size:10px;font-weight:400;opacity:.75;margin-left:3px}
 .bsave{background:var(--bx);color:#fff;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;transition:background .15s}
 .bsave:hover{background:var(--bxd)}
 .bcancel{background:none;color:var(--muted);padding:7px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-family:inherit}
@@ -413,8 +418,18 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
             <div class="field"><label>Destinataire</label><input id="f-to"></div>
             <div class="field"><label>Nom Marianatek</label><input id="f-mt" style="font-family:monospace;font-size:11px"></div>
           </div>
-          <div class="field"><label>Objet</label><input id="f-subject"></div>
-          <div class="field"><label>Contenu clé</label><textarea id="f-content" style="min-height:90px"></textarea></div>
+          <div class="ep-vertabs">
+            <button class="ep-vertab active" id="ep-v1-tab" onclick="epSwitchVer('v1')">V1<span class="ep-ver-sub">actuelle</span></button>
+            <button class="ep-vertab" id="ep-v2-tab" onclick="epSwitchVer('v2')">V2<span class="ep-ver-sub">nouvelle</span></button>
+          </div>
+          <div id="ep-v1-pane">
+            <div class="field"><label>Objet</label><input id="f-v1-subj" placeholder="Objet de l'email…"></div>
+            <div class="field"><label>Corps</label><textarea id="f-v1-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
+          </div>
+          <div id="ep-v2-pane" style="display:none">
+            <div class="field"><label>Objet</label><input id="f-v2-subj" placeholder="Objet de l'email…"></div>
+            <div class="field"><label>Corps</label><textarea id="f-v2-body" style="min-height:300px;line-height:1.65;font-size:12px" placeholder="Corps de l'email…"></textarea></div>
+          </div>
           <div class="sdiv">Notes</div>
           <div class="field"><textarea id="f-notes" style="min-height:50px"></textarea></div>
         </div>
@@ -1281,9 +1296,19 @@ function addRowToSection(ti,si){
   TABS[ti].sections[si].rows.push(r);
   selId=r.id;render();selectRow(r.id);
 }
+let epVer='v1';
+function epSwitchVer(v){
+  epVer=v;
+  document.getElementById('ep-v1-tab').classList.toggle('active',v==='v1');
+  document.getElementById('ep-v2-tab').classList.toggle('active',v==='v2');
+  document.getElementById('ep-v1-pane').style.display=v==='v1'?'':'none';
+  document.getElementById('ep-v2-pane').style.display=v==='v2'?'':'none';
+}
 function selectRow(id){
   selId=id;const r=findRow(id);if(!r)return;
   if(TABS[tab].sections.some(s=>s.split)){openModal(id);return;}
+  if(!r.v1)r.v1={subject:'',content:''};
+  if(!r.v2)r.v2={subject:'',content:''};
   const c=C[r.type];
   document.getElementById('right').style.display='flex';
   document.getElementById('ep-empty').style.display='none';
@@ -1291,7 +1316,12 @@ function selectRow(id){
   document.getElementById('ep-badge').textContent=c.label;
   document.getElementById('ep-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
   document.getElementById('ep-title').textContent=r.t1;
-  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=r[k]||'';});
+  ['t1','t2','type','to','mt','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=r[k]||'';});
+  document.getElementById('f-v1-subj').value=r.v1.subject||'';
+  document.getElementById('f-v1-body').value=r.v1.content||'';
+  document.getElementById('f-v2-subj').value=r.v2.subject||'';
+  document.getElementById('f-v2-body').value=r.v2.content||'';
+  epSwitchVer('v1');
   render();
 }
 function liveUp(){
@@ -1306,7 +1336,11 @@ function liveUp(){
 function saveEdit(){
   if(!selId)return;const r=findRow(selId);if(!r)return;
   pushUndo();
-  ['t1','t2','type','to','mt','subject','content','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)r[k]=el.value;});
+  ['t1','t2','type','to','mt','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)r[k]=el.value;});
+  r.v1={subject:document.getElementById('f-v1-subj').value.trim(),content:document.getElementById('f-v1-body').value};
+  r.v2={subject:document.getElementById('f-v2-subj').value.trim(),content:document.getElementById('f-v2-body').value};
+  if(r.v1.subject)r.subject=r.v1.subject;
+  if(r.v1.content)r.content=r.v1.content;
   scheduleGHSave();render();
 }
 function deleteRow(){
