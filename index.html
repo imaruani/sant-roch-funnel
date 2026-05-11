@@ -1700,6 +1700,7 @@ function showTep(n){
   }
   const panel=document.getElementById('tree-email-panel');
   panel.classList.add('tep-open');
+  requestAnimationFrame(()=>fitScreen());
   const dispType=row?getEffectiveType(row):(n.type==='email'?'email':'todo');
   const c=C[dispType]||C.todo;
   const badge=document.getElementById('tep-badge');
@@ -1738,6 +1739,7 @@ function closeTep(){
   setDiffMode(false);
   document.getElementById('tree-email-panel').classList.remove('tep-open');
   tepRow=null;tepNode=null;
+  requestAnimationFrame(()=>fitScreen());
 }
 
 // Resize handle + diff input listeners (script est en fin de body, DOM déjà prêt)
@@ -1769,6 +1771,7 @@ function closeTep(){
       handle.classList.remove('dragging');
       document.body.style.cursor='';
       document.body.style.userSelect='';
+      requestAnimationFrame(()=>fitScreen());
     });
   }
 })();
