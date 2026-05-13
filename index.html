@@ -743,29 +743,30 @@ const TABS=[
   ]},
 ]},
 {label:'Backlog',sections:[
-  {title:'Emails techniques',tag:'Automatiques ou manuels',rows:[
-    {id:'z1',type:'email',t1:'Password Reset',t2:'',to:'Client',mt:'Password Reset',subject:'',content:'Fonctionnel · À habiller aux couleurs Sant Roch',notes:''},
-    {id:'z2',type:'email',t1:'Membership Autopay Failure',t2:'',to:'Membre',mt:'Membership Autopay Failure',subject:'',content:'Échec autopay · CTA : Mettre à jour votre carte bancaire',notes:''},
-    {id:'z3',type:'todo',t1:'Customer Waiver',t2:'',to:'Nouveau client',mt:'Customer Waiver',subject:'',content:'Décharge à signer lors de la première inscription',notes:'Il faut le créer — à quelle étape du funnel on le place ? Et les contre-indications aussi'},
-    {id:'z4',type:'ok',t1:'Vat Invoice Email',t2:'',to:'Client',mt:'Vat Invoice Email',subject:'',content:'Facture TVA · Garder tel quel',notes:'Garder tel quel'},
-    {id:'z5',type:'ok',t1:'Studio Chargeback Notification',t2:'',to:'Studio',mt:'Studio Chargeback Notification',subject:'',content:'Notification chargeback / litige paiement · Garder tel quel',notes:'Garder tel quel'},
-    {id:'z6',type:'email',t1:'Customer Communication',t2:'',to:'Client',mt:'Customer Communication',subject:'',content:'Communication manuelle envoyée par le studio',notes:''},
+  {title:'Emails techniques',tag:'On utilise · Transactionnels automatiques',rows:[
+    {id:'z1',type:'email',t1:'Password Reset',t2:'À habiller',to:'Client',mt:'Password Reset',subject:'',content:'',notes:'Fonctionnel — à habiller aux couleurs Sant Roch'},
+    {id:'z2',type:'email',t1:'Autopay Failure',t2:'CTA : màj CB',to:'Membre',mt:'Membership Autopay Failure',subject:'',content:'',notes:''},
+    {id:'z3',type:'email',t1:'Customer Waiver',t2:'On utilise',to:'Nouveau client',mt:'Customer Waiver',subject:'',content:'',notes:'Envoi automatique après signature — à personnaliser'},
+    {id:'z7',type:'email',t1:'Purchase Agreement Receipt',t2:'Reçu achat',to:'Client',mt:'Purchase Agreement Receipt',subject:'',content:'',notes:'On utilise — envoi automatique après achat'},
+    {id:'z8',type:'email',t1:'Reservation Cancellation',t2:'Annulation séance',to:'Client',mt:'Reservation Cancellation',subject:'',content:'',notes:'On utilise — à personnaliser'},
   ]},
-  {title:'Others',tag:'Non mappés dans le funnel',rows:[
-    {id:'oth1',type:'email',t1:"Purchase Agreement Receipt",t2:'',to:'',mt:"Purchase Agreement Receipt",subject:'',content:'',notes:"On utilise"},
-    {id:'oth2',type:'email',t1:"Reservation Cancellation",t2:'',to:'',mt:"Reservation Cancellation",subject:'',content:'',notes:"Pas commenc\u00e9"},
-    {id:'oth3',type:'ok',t1:"Appointment Reminder - Instructor",t2:'',to:'',mt:"Appointment Reminder - Instructor",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth4',type:'ok',t1:"Chargeback",t2:'',to:'',mt:"Chargeback",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth5',type:'ok',t1:"Studio Chargeback Win Notification",t2:'',to:'',mt:"Studio Chargeback Win Notification",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth6',type:'ok',t1:"Live Stream Invite",t2:'',to:'',mt:"Live Stream Invite",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth7',type:'ok',t1:"Appointment Cancellation - Instructor",t2:'',to:'',mt:"Appointment Cancellation - Instructor",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth8',type:'ok',t1:"Appointment Recurring Confirmation - Instructor",t2:'',to:'',mt:"Appointment Recurring Confirmation - Instructor",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth9',type:'ok',t1:"Appointment Recurring Confirmation - Customer",t2:'',to:'',mt:"Appointment Recurring Confirmation - Customer",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth10',type:'ok',t1:"Vat Invoice Email / On le fait manuellement",t2:'',to:'',mt:"Vat Invoice Email / On le fait manuellement",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth11',type:'ok',t1:"Appointment Confirmation - Instructor",t2:'',to:'',mt:"Appointment Confirmation - Instructor",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth12',type:'ok',t1:"Appointment Time Change - Instructor",t2:'',to:'',mt:"Appointment Time Change - Instructor",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth13',type:'ok',t1:"Appointment Time Change - Customer",t2:'',to:'',mt:"Appointment Time Change - Customer",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"},
-    {id:'oth14',type:'ok',t1:"Studio Chargeback Loss Notification",t2:'',to:'',mt:"Studio Chargeback Loss Notification",subject:'',content:'',notes:"option qui existe mais qu'on utilise pas"}
+  {title:'Non utilisés — Mariana Tek',tag:'Existent sur MT · Pas encore activés',rows:[
+    {id:'nu1', type:'email',t1:'Purchase Confirmation',             t2:'Aucun contenu MT',   to:'Client',      mt:'Purchase Confirmation',                          subject:'',content:'',notes:'Pas de contenu dans Mariana Tek'},
+    {id:'nu2', type:'email',t1:'Appt. Récurrent — Client',         t2:'RDV récurrents',     to:'Client',      mt:'Appointment Recurring Confirmation - Customer',   subject:'',content:'',notes:''},
+    {id:'nu3', type:'email',t1:'Appt. Récurrent — Instructeur',    t2:'RDV récurrents',     to:'Instructeur', mt:'Appointment Recurring Confirmation - Instructor',  subject:'',content:'',notes:''},
+    {id:'nu4', type:'email',t1:'Appt. Récurrent — Guest',          t2:'RDV récurrents',     to:'Guest',       mt:'Appointment Recurring Confirmation - Guest',       subject:'',content:'',notes:''},
+    {id:'nu5', type:'email',t1:'Confirmation RDV — Instructeur',   t2:'',                   to:'Instructeur', mt:'Appointment Confirmation - Instructor',            subject:'',content:'',notes:''},
+    {id:'nu6', type:'email',t1:'Annulation RDV — Instructeur',     t2:'',                   to:'Instructeur', mt:'Appointment Cancellation - Instructor',            subject:'',content:'',notes:''},
+    {id:'nu7', type:'email',t1:'Rappel RDV — Instructeur',         t2:'En anglais',         to:'Instructeur', mt:'Appointment Reminder - Instructor',                subject:'',content:'',notes:'En anglais — à traduire'},
+    {id:'nu8', type:'email',t1:'Changement horaire — Client',      t2:'En anglais',         to:'Client',      mt:'Appointment Time Change - Customer',               subject:'',content:'',notes:'En anglais — à traduire'},
+    {id:'nu9', type:'email',t1:'Changement horaire — Instructeur', t2:'En anglais',         to:'Instructeur', mt:'Appointment Time Change - Instructor',             subject:'',content:'',notes:'En anglais — à traduire'},
+    {id:'nu10',type:'email',t1:'Customer Communication',           t2:'Template générique', to:'Client',      mt:'Customer Communication',                          subject:'',content:'',notes:'Template vide — à personnaliser'},
+    {id:'nu11',type:'email',t1:'Live Stream Invite',               t2:'Cours en ligne',     to:'Client',      mt:'Live Stream Invite',                               subject:'',content:'',notes:'Pour les cours en ligne'},
+    {id:'nu12',type:'email',t1:'Vat Invoice',                      t2:'Envoi manuel',       to:'Client',      mt:'Vat Invoice Email / On le fait manuellement',      subject:'',content:'',notes:'Envoi manuel uniquement'},
+    {id:'nu13',type:'email',t1:'Studio Chargeback Notif.',         t2:'En anglais',         to:'Studio',      mt:'Studio Chargeback Notification',                   subject:'',content:'',notes:'En anglais — Chargeback FR existe aussi (nu14)'},
+    {id:'nu14',type:'email',t1:'Chargeback (FR)',                  t2:'Version FR perso',   to:'Studio',      mt:'Chargeback',                                       subject:'',content:'',notes:'Version française personnalisée'},
+    {id:'nu15',type:'email',t1:'Chargeback Gagné',                 t2:'En anglais',         to:'Studio',      mt:'Studio Chargeback Win Notification',               subject:'',content:'',notes:'En anglais'},
+    {id:'nu16',type:'email',t1:'Chargeback Perdu',                 t2:'En anglais',         to:'Studio',      mt:'Studio Chargeback Loss Notification',              subject:'',content:'',notes:'En anglais'},
   ]},
 ]},
 ];
@@ -816,15 +817,18 @@ const EMAIL_BODIES={
   'Appointment Confirmation - Instructor':{v1:{subject:'Confirmation de rendez-vous',content:'Bonjour {{instructor_name}},\n \nUn nouveau rendez-vous a été réservé avec vous :\n \nClient : {{customer_name}}\nPrestation : {{appointment_name}}\nDate et heure : {{appointment_datetime}}\nLieu : {{studio_location}}\n \nMerci,\n \n{{tenant_name}} - {{studio_location}} - Équipe'},v2:{subject:'',content:''}},
   'Appointment Time Change - Instructor':{v1:{subject:'Appointment Rescheduled',content:'Hi {{instructor_name}},\nYour appointment “{{appointment_name}}” at {{studio_location}} with {{customer_name}} was originally set for {{old_appointment_datetime}}. It has now been moved to {{new_appointment_datetime}}.\nThanks for your understanding.\nBest,\n{{tenant_name}} - {{studio_location}} - Team'},v2:{subject:'',content:''}},
   'Appointment Time Change - Customer':{v1:{subject:'Appointment Rescheduled',content:'Hi {{customer_name}},\nYour appointment “{{appointment_name}}” at {{studio_location}} with {{instructor_name}} was originally set for {{old_appointment_datetime}}. It has now been moved to {{new_appointment_datetime}}.\nIf this new time doesn’t work, please reply right away so we can find a suitable alternative.\nThanks for your understanding.\nBest,\n\n{{tenant_name}} - {{studio_location}} - Team'},v2:{subject:'',content:''}},
+  'Purchase Confirmation':{v1:{subject:'',content:''},v2:{subject:'',content:''}},
   'Studio Chargeback Loss Notification':{v1:{subject:'{{ brand_name }}: Dispute Lost - {{ dispute_number }}',content:'Hi {{connected_account_name}},\nUnfortunately, the following dispute was not resolved in your business\'s favor:\nHere is some information about the resolved dispute:\n• Connected account name: {{connected_account_name}}\n• Connected account number: {{connected_account_number}}\n• Dispute number: {{dispute_number}}{{#if customer_name}}\n• Customer name: {{customer_name}}\n• Customer email: {{customer_email}}{{/if}}\n• Dispute amount: {{disputed_amount}}\n• Original transaction date: {{original_transaction_date}}\n• Disputed on: {{disputed_on}}\n• Disputed reason: {{disputed_reason}}\nWe know it\'s frustrating to lose a dispute, especially after submitting evidence.\nThe customer’s bank reviews and decides disputes using its own internal process. Outcomes can depend on several factors and often come down to the bank’s discretion. Because this review happens entirely on the bank’s side, the decision is final and we don’t receive specific explanations for individual rulings.\nWhile our Chargeback Manager tool enables you to submit evidence directly to the bank, neither our team nor your payment processor can influence or appeal the final decision.\nPlease email mailto:support@marianatek.com if you have any questions. Do not respond to this email. We would be happy to help.\nThank you!\nAll the best,\nMariana Tek Support Team'},v2:{subject:'',content:''}}
 };
 
 // Seed v1/v2 fields from EMAIL_BODIES
+// V1 = toujours la version Mariana Tek actuelle (source de vérité)
+// V2 = version réécrite par l'équipe Sant Roch
 TABS.forEach(t=>t.sections.forEach(s=>s.rows.forEach(r=>{
   if(!r.v1) r.v1={subject:'',content:''};
   if(!r.v2) r.v2={subject:'',content:''};
   const b=EMAIL_BODIES[r.mt];
-  if(b&&!r.v1.content){r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;}
+  if(b){r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;} // toujours écraser V1 avec le contenu MT
 })));
 
 const orig=JSON.parse(JSON.stringify(TABS));
@@ -2289,10 +2293,10 @@ async function applyGHData(raw){
           TABS[i].sections[si].rows.push(...s.rows.slice(TABS[i].sections[si].rows.length));
       });
     });
-    // Re-seed EMAIL_BODIES for rows still without v1 content after GH merge
+    // Re-seed V1 depuis EMAIL_BODIES — V1 = toujours la version MT (source de vérité)
     TABS.forEach(t=>t.sections.forEach(s=>s.rows.forEach(r=>{
       const b=EMAIL_BODIES[r.mt];
-      if(b&&(!r.v1||!r.v1.content)){if(!r.v1)r.v1={subject:'',content:''};r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;}
+      if(b){if(!r.v1)r.v1={subject:'',content:''};r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;}
     })));
     if(d.TREES) d.TREES.forEach((t,i)=>{
       if(!TREES[i]||!t.nodes)return;
