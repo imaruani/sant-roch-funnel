@@ -498,7 +498,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
             <input class="tep-inp" id="tep-v2-subj" placeholder="Objet de l'email…">
             <div class="diff-subj-view" id="diff-subj-view"></div>
             <div class="tep-fl">Corps</div>
-            <div class="rte-toolbar"><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('bold')" title="Gras"><b>B</b></button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('italic')" title="Italique"><i>I</i></button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('underline')" title="Souligné"><u>U</u></button><span class="rte-sep"></span><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('insertUnorderedList')" title="Liste à puces">• —</button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('insertOrderedList')" title="Liste numérotée">1. —</button></div>
+            <div class="rte-toolbar" id="tep-v2-toolbar"><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('bold')" title="Gras"><b>B</b></button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('italic')" title="Italique"><i>I</i></button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('underline')" title="Souligné"><u>U</u></button><span class="rte-sep"></span><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('insertUnorderedList')" title="Liste à puces">• —</button><button type="button" class="rte-btn" onmousedown="event.preventDefault();rteCmd('insertOrderedList')" title="Liste numérotée">1. —</button></div>
             <div class="tep-ta rte" contenteditable="true" id="tep-v2-body" data-placeholder="Corps de l'email…" onpaste="rtePaste(event)"></div>
             <div class="diff-view" id="diff-view"></div>
             <div class="diff-legend" id="diff-legend" style="display:none">
@@ -1728,6 +1728,16 @@ function drawAllEdges(tree,g){
 
 /* ─── TREE EMAIL PANEL ─── */
 /* ─── DIFF helpers ─── */
+function htmlToText(html){
+  // Convertit HTML riche → texte brut normalisé pour la comparaison diff
+  return (html||'')
+    .replace(/<br\s*\/?>/gi,'\n')
+    .replace(/<\/div>/gi,'\n')
+    .replace(/<[^>]+>/g,'')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
+    .replace(/\n{3,}/g,'\n\n')
+    .trim();
+}
 function tokenize(text){
   // Split on whitespace, keeping whitespace tokens so formatting is preserved
   return (text||'').split(/(\s+)/);
@@ -1769,8 +1779,9 @@ function diffToHtml(diff){
 }
 function renderDiff(){
   if(!diffMode)return;
-  const v1b=document.getElementById('tep-v1-body').innerText;
-  const v2b=document.getElementById('tep-v2-body').innerText;
+  // innerHTML fonctionne même sur les éléments cachés (contrairement à innerText)
+  const v1b=htmlToText(document.getElementById('tep-v1-body').innerHTML);
+  const v2b=htmlToText(document.getElementById('tep-v2-body').innerHTML);
   const v1s=document.getElementById('tep-v1-subj').value;
   const v2s=document.getElementById('tep-v2-subj').value;
   document.getElementById('diff-view').innerHTML=diffToHtml(wordDiff(v1b,v2b));
@@ -1784,12 +1795,14 @@ function setDiffMode(on){
   const leg=document.getElementById('diff-legend');
   const v2body=document.getElementById('tep-v2-body');
   const v2subj=document.getElementById('tep-v2-subj');
+  const v2toolbar=document.getElementById('tep-v2-toolbar');
   btn.classList.toggle('active',on);
   dv.classList.toggle('on',on);
   ds.classList.toggle('on',on);
   if(leg) leg.style.display=on?'flex':'none';
   v2body.style.display=on?'none':'';
   v2subj.style.display=on?'none':'';
+  if(v2toolbar) v2toolbar.style.display=on?'none':'';
   if(on) renderDiff();
 }
 function toggleDiff(){setDiffMode(!diffMode);}
