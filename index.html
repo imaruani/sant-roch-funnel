@@ -2186,7 +2186,7 @@ document.addEventListener('keydown',(e)=>{
   // Undo / Redo — priorité absolue même dans les champs
   if((e.metaKey||e.ctrlKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();undo();return;}
   if((e.metaKey||e.ctrlKey)&&((e.key==='z'&&e.shiftKey)||(e.key==='y'))){e.preventDefault();redo();return;}
-  if(['INPUT','TEXTAREA','SELECT'].includes(active))return;
+  if(['INPUT','TEXTAREA','SELECT'].includes(active)||document.activeElement.isContentEditable)return;
   if(e.key==='Escape'){if(connectMode)toggleConnectMode();closeElp();}
   if(currentView==='tree'){
     if(e.key==='Delete'||e.key==='Backspace'){if(selectedEdgeId)deleteSelectedEdge();else if(selectedNodeId)deleteSelectedNode();}
