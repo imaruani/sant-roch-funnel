@@ -257,6 +257,10 @@ tbody tr:hover .btn-row-del:hover{opacity:1}
 .tep-inp:focus{border-color:#2563EB;box-shadow:0 0 0 2px #DBEAFE}
 .tep-ta{width:100%;flex:1;min-height:220px;font-size:11.5px;padding:8px 10px;border:1px solid var(--border);border-radius:5px;font-family:-apple-system,sans-serif;color:var(--text);background:#fff;outline:none;resize:none;line-height:1.65;box-sizing:border-box;margin-top:3px}
 .tep-ta:focus{border-color:#2563EB;box-shadow:0 0 0 2px #DBEAFE}
+/* ── Lien Mariana Tek ── */
+.mt-link{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:#2563EB;text-decoration:none;padding:2px 8px;border:1px solid #BFDBFE;border-radius:4px;background:#EFF6FF;white-space:nowrap;margin-left:6px;transition:background .12s}
+.mt-link:hover{background:#DBEAFE}
+.mt-link svg{flex-shrink:0}
 /* ── Rich text editor ── */
 .rte{overflow-y:auto;cursor:text;white-space:pre-wrap;word-break:break-word}
 div.rte:empty:before{content:attr(data-placeholder);color:var(--muted);pointer-events:none;opacity:.55;font-style:italic}
@@ -387,7 +391,13 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
       <div class="ep-form" id="ep-form">
         <div class="ep-head">
           <div class="ep-badge" id="ep-badge"></div>
-          <div class="ep-title" id="ep-title"></div>
+          <div style="flex:1;min-width:0">
+            <div class="ep-title" id="ep-title"></div>
+            <a id="ep-mt-link" class="mt-link" href="#" target="_blank" rel="noopener" style="display:none;margin-left:0;margin-top:3px">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h4v1.5H3.5v5h5V7H10v3H2V2Z" fill="currentColor"/><path d="M6.5 2H10v3.5H8.5V4.06L5.03 7.53 3.97 6.47 7.44 3H6.5V2Z" fill="currentColor"/></svg>
+              Voir sur Mariana Tek
+            </a>
+          </div>
           <button class="ep-close" onclick="closeEdit()">×</button>
         </div>
         <div class="ep-body">
@@ -466,6 +476,10 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
             <span id="tep-badge" class="badge"></span>
             <span class="tep-name" id="tep-name">—</span>
             <span class="tep-mt-lbl" id="tep-mt-lbl"></span>
+            <a id="tep-mt-link" class="mt-link" href="#" target="_blank" rel="noopener" style="display:none">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h4v1.5H3.5v5h5V7H10v3H2V2Z" fill="currentColor"/><path d="M6.5 2H10v3.5H8.5V4.06L5.03 7.53 3.97 6.47 7.44 3H6.5V2Z" fill="currentColor"/></svg>
+              Voir sur MT
+            </a>
           </div>
           <button class="tep-close" onclick="closeTep()" title="Fermer">×</button>
         </div>
@@ -819,6 +833,55 @@ const EMAIL_BODIES={
   'Appointment Time Change - Customer':{v1:{subject:'Appointment Rescheduled',content:'Hi {{customer_name}},\nYour appointment “{{appointment_name}}” at {{studio_location}} with {{instructor_name}} was originally set for {{old_appointment_datetime}}. It has now been moved to {{new_appointment_datetime}}.\nIf this new time doesn’t work, please reply right away so we can find a suitable alternative.\nThanks for your understanding.\nBest,\n\n{{tenant_name}} - {{studio_location}} - Team'},v2:{subject:'',content:''}},
   'Purchase Confirmation':{v1:{subject:'',content:''},v2:{subject:'',content:''}},
   'Studio Chargeback Loss Notification':{v1:{subject:'{{ brand_name }}: Dispute Lost - {{ dispute_number }}',content:'Hi {{connected_account_name}},\nUnfortunately, the following dispute was not resolved in your business\'s favor:\nHere is some information about the resolved dispute:\n• Connected account name: {{connected_account_name}}\n• Connected account number: {{connected_account_number}}\n• Dispute number: {{dispute_number}}{{#if customer_name}}\n• Customer name: {{customer_name}}\n• Customer email: {{customer_email}}{{/if}}\n• Dispute amount: {{disputed_amount}}\n• Original transaction date: {{original_transaction_date}}\n• Disputed on: {{disputed_on}}\n• Disputed reason: {{disputed_reason}}\nWe know it\'s frustrating to lose a dispute, especially after submitting evidence.\nThe customer’s bank reviews and decides disputes using its own internal process. Outcomes can depend on several factors and often come down to the bank’s discretion. Because this review happens entirely on the bank’s side, the decision is final and we don’t receive specific explanations for individual rulings.\nWhile our Chargeback Manager tool enables you to submit evidence directly to the bank, neither our team nor your payment processor can influence or appeal the final decision.\nPlease email mailto:support@marianatek.com if you have any questions. Do not respond to this email. We would be happy to help.\nThank you!\nAll the best,\nMariana Tek Support Team'},v2:{subject:'',content:''}}
+};
+
+// Liens directs vers les templates Mariana Tek
+const MT_URLS={
+  'Purchase Agreement Receipt':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/ba3698a8-1773-410c-abcb-e15ace34b884/view',
+  'Guest Reservation Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/fee4a131-2a72-4bc3-afee-dec423e1499c/view',
+  'Reservation Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/c5888841-7715-4802-b9e9-70f53c331065/view',
+  'Waitlist Addition':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/4fc4d45d-4c5b-4190-9504-93560b164d57/view',
+  'Guest Reservation Confirmation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/94f2b885-777a-4567-bbc6-09e65676ce74/view',
+  'Appointment Cancellation - Guest':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/2c0d410a-09a9-4373-a2ae-895ddfb16e18/view',
+  'Appointment Recurring Confirmation - Guest':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/9f5db892-e8ef-48e9-967e-8234d9ec5720/view',
+  'Customer Waiver':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/5af3c07a-cbbd-4749-8e1f-bc7405de7021/view',
+  'Appointment Confirmation - Customer':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/d158dd71-41a2-4925-9198-732d40ef1653/view',
+  'Appointment Cancellation - Customer':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/0d29f2cc-0f5a-47a6-800b-c72acd8a88ec/view',
+  'Studio Chargeback Loss Notification':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/bc490e14-6f50-4169-b69e-826215a92f80/view',
+  'Appointment Time Change - Customer':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/97bc4e01-663a-4701-91eb-9adca44e2080/view',
+  'Appointment Confirmation - Instructor':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/81e34155-4b9f-47ee-b6f9-5717aebabdf1/view',
+  'Appointment Time Change - Instructor':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/6c7b00da-4690-4ddb-83cf-b5958b919771/view',
+  'Studio Chargeback Notification':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/95481698-dfee-4e90-8191-bde63f824bd4/view',
+  'Vat Invoice Email / On le fait manuellement':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/07a8947d-b169-4aef-996c-c749fdc7b636/view',
+  'Appointment Confirmation - Guest':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/d881e4a7-0519-4dd4-a586-efc0b6808b90/view',
+  'Appointment Recurring Confirmation - Customer':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/4bedfd86-a0bc-4c9a-8265-c1c756201bc6/view',
+  'Appointment Recurring Confirmation - Instructor':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/7ab1d11c-a60e-44b6-a00f-905791456dc6/view',
+  'Appointment Cancellation - Instructor':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/dba253a0-109f-40ec-9a3f-b28028f9337d/view',
+  'Customer Communication':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/6c1691ff-f0cc-4a6e-ab1e-14d41cc46df8/view',
+  'Purchase Confirmation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/fcf7aedb-6912-4483-99ea-cb798338c856/view',
+  'Live Stream Invite':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/69e45306-2468-4c3b-83fb-5653b23d534a/view',
+  'Studio Chargeback Win Notification':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/c9451d3e-9479-492b-bb07-2579f7ab96fd/view',
+  'Appointment Reminder - Customer':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/42c643dd-df3f-47eb-bb3e-27e7fb00ea25/view',
+  'Chargeback':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/4e54fd60-bdb7-4c57-a177-35a9be39e260/view',
+  'Password Reset':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/2a48d764-2ebc-4721-9190-d380bf95b7cd/view',
+  'Appointment Reminder - Instructor':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/631c8b85-2c40-449c-94d6-fe4e9fa65d8b/view',
+  'Guest Waitlist Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/5af52e0c-c742-4211-a990-b3cbcc972b36/view',
+  'Waitlist Guest Invitation Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/8275a12e-616c-4c1b-9f2f-706f2f24affd/view',
+  'Guest Waitlist Upgrade':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/43f1b27c-bc40-47c6-8967-af3afac06600/view',
+  'Reservation Guest Invitation Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/d025cfde-849e-4bba-bf02-31517f712fde/view',
+  'Guest Waitlist Addition':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/284e3703-2a36-491f-9dd8-741ef44562ae/view',
+  'Waitlist Guest Invitation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/7414ef65-7d25-4c48-ac5d-5f1956358ee1/view',
+  'Reservation Guest Invitation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/7516961a-6c1a-424c-bb49-1b93b9b8ed12/view',
+  'Guest Waitlist Invitation Upgrade':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/10a0452b-c2dd-4217-804b-34e80ee0ac6d/view',
+  'Membership Freeze':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/b59e9fa9-35d0-4e24-af3a-bbf47e1a1fda/view',
+  'Membership Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/2d3b3762-d9b9-469b-98cc-e14334d75880/view',
+  'Gift Card Notification':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/067743fd-2299-4813-819b-97a18fe9ba10/view',
+  'Membership Autopay Failure':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/deb82f70-ac06-4c92-b801-6866133c845e/view',
+  'New Registration':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/21e92790-acc0-4e27-adba-a1d11cc31e70/view',
+  'Reservation Confirmation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/79c3cc43-8459-46a6-bdbf-be9353698a7e/view',
+  'Waitlist Upgrade':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/9391c740-a33c-4737-a7bc-9766a720f21c/view',
+  'First Class Check-In':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/17d24608-6d8c-478d-98bc-64c876179086/view',
+  'Waitlist Cancellation':'https://messaging.xplorcs.com/account/8135e837-f7ca-4f9b-8ac0-a3f9d1cbcb43/template/400c4b20-21db-471a-a585-5a6d8bbd76d4/view',
 };
 
 // Seed v1/v2 fields from EMAIL_BODIES
@@ -1376,6 +1439,9 @@ function selectRow(id){
   document.getElementById('ep-badge').textContent=c.label;
   document.getElementById('ep-badge').style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
   document.getElementById('ep-title').textContent=r.t1;
+  const epMtLink=document.getElementById('ep-mt-link');
+  const epMtUrl=r.mt?MT_URLS[r.mt]:null;
+  if(epMtUrl){epMtLink.href=epMtUrl;epMtLink.style.display='inline-flex';}else{epMtLink.style.display='none';}
   ['t1','t2','type','to','mt','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=r[k]||'';});
   document.getElementById('f-v1-subj').value=r.v1.subject||'';
   document.getElementById('f-v1-body').innerHTML=r.v1.content||'';
@@ -1772,6 +1838,9 @@ function showTep(n){
   badge.style.cssText=`background:${c.fill};color:${c.t1==='#fff'?'#fff':c.stroke}`;
   document.getElementById('tep-name').textContent=n.t1;
   document.getElementById('tep-mt-lbl').textContent=row?.mt&&row.mt!=='—'?'· '+row.mt:'';
+  const tepMtLink=document.getElementById('tep-mt-link');
+  const tepMtUrl=row?.mt?MT_URLS[row.mt]:null;
+  if(tepMtUrl){tepMtLink.href=tepMtUrl;tepMtLink.style.display='inline-flex';}else{tepMtLink.style.display='none';}
   document.getElementById('tep-v1-subj').value=row?.v1?.subject||'';
   document.getElementById('tep-v1-body').innerHTML=row?.v1?.content||'';
   document.getElementById('tep-v2-subj').value=row?.v2?.subject||'';
