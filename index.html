@@ -2367,13 +2367,29 @@ async function applyGHData(raw){
       const b=EMAIL_BODIES[r.mt];
       if(b){if(!r.v1)r.v1={subject:'',content:''};r.v1.subject=b.v1.subject;r.v1.content=b.v1.content;}
     })));
+    // Table de migration des anciens noms → nouveaux noms
+    const T1_RENAME={
+      'Conf. abo':'Confirmation abonnement',
+      'Conf. pack':'Confirmation pack',
+      'Conf. séance':'Confirmation séance à l\'unité',
+      'Liste d\'attente':'Liste d\'attente — ajout',
+      'Place obtenue — liste d\'attente':'Liste d\'attente — place obtenue',
+      'Annulation liste attente':'Liste d\'attente — annulation',
+      'Rappel J-1':'Rappel J-1 — session libre',
+      'Email annulation':'Annulation réservation (client)',
+      'First check-in':'First Check-In',
+      'Bénéficiaire reçoit la carte':'Réception carte cadeau',
+      'Customer Comm.':'Customer Communication',
+    };
     if(d.TREES) d.TREES.forEach((t,i)=>{
       if(!TREES[i]||!t.nodes)return;
       const def=TREES_DEFAULT[i];
+      // Migration : renommer les anciens t1 → nouveaux t1 (préserve positions/layout)
+      t.nodes.forEach(n=>{ if(T1_RENAME[n.t1]) n.t1=T1_RENAME[n.t1]; });
       const savedT1=new Set(t.nodes.map(n=>n.t1));
       const missing=def?def.nodes.filter(n=>!savedT1.has(n.t1)):[];
       if(missing.length){
-        // Des nodes hardcodés n'existent pas dans la sauvegarde — reset aux defaults
+        // Nouveaux nodes ajoutés au code depuis la dernière sauvegarde — reset aux defaults
         TREES[i].nodes=def.nodes.map(n=>Object.assign({},n));
         TREES[i].edges=[];
         delete TREES[i]._init;
