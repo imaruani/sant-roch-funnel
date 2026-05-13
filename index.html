@@ -904,22 +904,22 @@ const TREES=[
     {x:195,y:155,w:270,h:36,type:'decision',t1:'A-t-il acheté ?',t2:'dans les 7 jours suivants'},
     {x:40,y:220,w:160,h:58,type:'todo',t1:'Relances',t2:'J+3 · J+7 sans achat'},
     {x:400,y:220,w:200,h:36,type:'decision',t1:'Quel achat ?',t2:'type de produit'},
-    {x:280,y:290,w:120,h:36,type:'email',t1:'Conf. abo',t2:'par type'},
-    {x:410,y:290,w:130,h:36,type:'email',t1:'Conf. pack',t2:'+ inviter guest'},
-    {x:550,y:290,w:100,h:36,type:'email',t1:'Conf. séance',t2:''},
+    {x:280,y:290,w:120,h:36,type:'email',t1:'Confirmation abonnement',t2:'Purchase Confirmation'},
+    {x:410,y:290,w:130,h:36,type:'email',t1:'Confirmation pack',t2:'Purchase Confirmation'},
+    {x:550,y:290,w:100,h:36,type:'email',t1:'Confirmation séance à l\'unité',t2:'Purchase Confirmation'},
     {x:345,y:400,w:250,h:36,type:'decision',t1:'Il réserve une session',t2:'via le lien dans l\'email'},
     {x:345,y:465,w:250,h:36,type:'decision',t1:'Session disponible ?',t2:'place libre ou liste d\'attente'},
-    {x:345,y:530,w:250,h:36,type:'email',t1:'Confirmation réservation',t2:'Appointment Confirmation'},
-    {x:160,y:530,w:200,h:36,type:'email',t1:'Liste d\'attente',t2:'Waitlist Addition'},
+    {x:345,y:530,w:250,h:36,type:'email',t1:'Confirmation réservation',t2:'Appointment Confirmation - Customer'},
+    {x:160,y:530,w:200,h:36,type:'email',t1:'Liste d\'attente — ajout',t2:'Waitlist Addition'},
     {x:160,y:595,w:200,h:36,type:'decision',t1:'Place se libère ?',t2:''},
-    {x:44,y:660,w:200,h:36,type:'email',t1:'Place obtenue — liste d\'attente',t2:'Waitlist Upgrade'},
-    {x:44,y:730,w:180,h:36,type:'email',t1:'Annulation liste attente',t2:'Waitlist Cancellation'},
-    {x:345,y:660,w:250,h:50,type:'email',t1:'Rappel J-1',t2:'Libre · Guidée'},
+    {x:44,y:660,w:200,h:36,type:'email',t1:'Liste d\'attente — place obtenue',t2:'Waitlist Upgrade'},
+    {x:44,y:730,w:180,h:36,type:'email',t1:'Liste d\'attente — annulation',t2:'Waitlist Cancellation'},
+    {x:345,y:660,w:250,h:50,type:'email',t1:'Rappel J-1 — session libre',t2:'Appointment Reminder - Customer'},
     {x:345,y:740,w:250,h:36,type:'decision',t1:'Annule avant la session ?',t2:''},
-    {x:530,y:800,w:110,h:36,type:'email',t1:'Email annulation',t2:'CTA reprogrammer'},
+    {x:530,y:800,w:110,h:36,type:'email',t1:'Annulation réservation (client)',t2:'Appointment Cancellation - Customer'},
     {x:345,y:800,w:160,h:36,type:'key',t1:'Session',t2:'sauna + bain froid'},
     {x:310,y:865,w:250,h:36,type:'decision',t1:'Première visite ?',t2:''},
-    {x:520,y:920,w:110,h:36,type:'email',t1:'First check-in',t2:'+ J+1'},
+    {x:520,y:920,w:110,h:36,type:'email',t1:'First Check-In',t2:'First Class Check-In'},
     {x:310,y:920,w:200,h:36,type:'todo',t1:'Post-session J+1',t2:'récupération · prochain créneau'},
     // [22] — décision post-session
     {x:230,y:1010,w:300,h:40,type:'decision',t1:'Quel est son statut ?',t2:'Inactif · Pack · Membre actif'},
@@ -977,7 +977,7 @@ const TREES=[
   {nodes:[
     {x:200,y:20,w:260,h:40,type:'key',t1:'Achat d\'une carte cadeau',t2:'par un acheteur'},
     {x:160,y:90,w:340,h:50,type:'todo',t1:'Confirmation achat',t2:'Acheteur · Non trouvé dans MT — à créer'},
-    {x:160,y:170,w:340,h:36,type:'email',t1:'Bénéficiaire reçoit la carte',t2:'Gift Card Notification'},
+    {x:160,y:170,w:340,h:36,type:'email',t1:'Réception carte cadeau',t2:'Gift Card Notification'},
     {x:185,y:236,w:290,h:36,type:'decision',t1:'Active-t-il la carte ?',t2:'réservation dans les jours suivants'},
     {x:430,y:290,w:220,h:50,type:'key',t1:'Rejoint le parcours client',t2:'New Registration → funnel standard'},
     {x:20,y:290,w:200,h:36,type:'todo',t1:'Relance J+14',t2:'"Votre cadeau vous attend"'},
@@ -994,7 +994,7 @@ const TREES=[
     {x:244,y:100,w:100,h:50,type:'todo',t1:'Customer Waiver',t2:'À créer'},
     {x:356,y:100,w:100,h:50,type:'ok',t1:'Vat Invoice',t2:'Garder'},
     {x:468,y:100,w:110,h:50,type:'ok',t1:'Chargeback',t2:'Garder'},
-    {x:580,y:100,w:100,h:50,type:'email',t1:'Customer Comm.',t2:'Manuel'},
+    {x:580,y:100,w:100,h:50,type:'email',t1:'Customer Communication',t2:'Manuel'},
     // ── Others ──
     {x:190,y:200,w:280,h:40,type:'key',t1:'Others',t2:'Non mappés dans le funnel'},
     {x:10, y:280,w:155,h:50,type:'email',t1:'Purchase Agreement Receipt',       t2:'Purchase Agreement Receipt'},
@@ -1045,7 +1045,7 @@ const DUAL_TREES={
         // 7
         {x:10, y:210,w:210,h:36,type:'decision', t1:'Place se libère ?',               t2:''},
         // 8 — place obtenue → rejoint le nœud 3
-        {x:10, y:270,w:210,h:36,type:'email',    t1:"Place obtenue — liste d'attente", t2:'Bonne nouvelle 🎉'},
+        {x:10, y:270,w:210,h:36,type:'email',    t1:'Liste d\'attente — place obtenue', t2:'Bonne nouvelle 🎉'},
         // 9 — sortie définitive liste d'attente annulée
         {x:10, y:390,w:210,h:36,type:'email',    t1:"Liste d'attente — annulation",    t2:'Retrait · message bienveillant'},
         // 10 — post-session
@@ -1084,11 +1084,11 @@ const DUAL_TREES={
         // 7
         {x:10, y:210,w:220,h:36,type:'decision',  t1:'Place se libère ?',                     t2:''},
         // 8 — place obtenue → rejoint nœud 3
-        {x:10, y:270,w:220,h:36,type:'email',     t1:"Guest obtient sa place",                t2:'Ton guest a sa place ✓'},
+        {x:10, y:270,w:220,h:36,type:'email',     t1:'Liste d\'attente — guest obtient sa place',                t2:'Ton guest a sa place ✓'},
         // 9 — sortie liste d'attente annulée
         {x:10, y:390,w:220,h:36,type:'email',     t1:"Liste d'attente — annulation guest",    t2:"Ton invité retiré de la liste"},
         // 10 — à investiguer
-        {x:130,y:460,w:240,h:36,type:'decision',  t1:'Appointment Confirmation - Guest ?',    t2:'À investiguer — 1:1 vs groupe ?'},
+        {x:130,y:460,w:240,h:36,type:'decision',  t1:'Appointment Confirmation - Guest',    t2:'À investiguer — 1:1 vs groupe ?'},
       ],
       initEdges:[
         [0,1,null],
