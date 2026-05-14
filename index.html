@@ -350,8 +350,8 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
   <button class="ttab" onclick="switchTab(3)">Backlog</button>
   <button class="tab-add" onclick="addTab()" title="Ajouter un onglet">＋</button>
   <div class="vtabs">
-    <button class="vtab active" id="vt-table" onclick="switchView('table')">Tableau</button>
-    <button class="vtab" id="vt-tree" onclick="switchView('tree')">Arbre</button>
+    <button class="vtab" id="vt-table" onclick="switchView('table')">Tableau</button>
+    <button class="vtab active" id="vt-tree" onclick="switchView('tree')">Arbre</button>
   </div>
 </div>
 
@@ -1169,7 +1169,7 @@ function findNodeDualTree(nodeId){
 /* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
-let tab=0, selId=null, currentView='table', searchQ='';
+let tab=0, selId=null, currentView='tree', searchQ='';
 let collapsedSecs=new Set();
 const NS='http://www.w3.org/2000/svg';
 let idCtr=2000;
@@ -2489,7 +2489,7 @@ async function saveToGitHub(){
   TREES.forEach(t=>initTree(t));
   ensureDefs();
   initSVGEvents();
-  render();
+  switchView('tree');
   // Afficher le manuel au premier lancement
   if(!localStorage.getItem('sr_onboard_done')){
     document.getElementById('onboard-overlay').classList.add('open');
