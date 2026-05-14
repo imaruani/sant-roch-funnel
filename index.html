@@ -298,6 +298,29 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
 .diff-legend{font-size:10px;color:var(--muted);margin-top:6px;display:flex;gap:10px;flex-shrink:0}
 .diff-legend span{display:flex;align-items:center;gap:3px}
 
+/* ONBOARDING MODAL */
+#onboard-overlay{z-index:800}
+.onboard-box{background:#fff;border-radius:14px;width:740px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.22)}
+.onboard-head{background:var(--bxm);padding:24px 28px 20px;color:#fff;flex-shrink:0;position:relative}
+.onboard-logo{font-size:28px;margin-bottom:8px}
+.onboard-title{font-size:18px;font-weight:700;color:#fff;margin:0 0 6px}
+.onboard-sub{font-size:13px;color:rgba(255,255,255,.75);margin:0;line-height:1.5}
+.onboard-head .modal-close{color:#fff;opacity:.65;position:absolute;top:14px;right:16px;font-size:22px}
+.onboard-head .modal-close:hover{opacity:1}
+.onboard-body{padding:20px 24px;overflow-y:auto;flex:1}
+.onboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ob-card{border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.ob-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--bxm);display:flex;align-items:center;gap:6px}
+.ob-card-title span{font-size:16px}
+.ob-row{font-size:12px;color:var(--text);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+.ob-key{font-size:10px;background:var(--beige);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:var(--muted);white-space:nowrap;flex-shrink:0;font-family:-apple-system,sans-serif}
+.ob-tip{font-size:11.5px;color:var(--muted);background:#FAFAF8;border-radius:6px;padding:8px 10px;border:1px solid var(--border);line-height:1.55;margin-top:2px}
+.ob-tip strong{color:var(--text)}
+.onboard-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;background:#FAFAF8}
+.onboard-check{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.onboard-check input{cursor:pointer;accent-color:var(--bxm)}
+.ob-full{grid-column:1/-1}
+
 </style>
 </head>
 <body>
@@ -316,6 +339,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
     <button class="hbtn hg" id="btn-gh-save" onclick="saveToGitHub()">💾 Sauvegarder</button>
     <button class="hbtn hg" onclick="exportCSV()">↓ CSV</button>
     <button class="hbtn hg" onclick="exportJSON()">↓ JSON</button>
+    <button class="hbtn hg" onclick="openOnboard()" title="Manuel d'utilisation" style="font-size:14px;padding:4px 10px">?</button>
   </div>
 </header>
 
@@ -2466,7 +2490,121 @@ async function saveToGitHub(){
   ensureDefs();
   initSVGEvents();
   render();
+  // Afficher le manuel au premier lancement
+  if(!localStorage.getItem('sr_onboard_done')){
+    document.getElementById('onboard-overlay').classList.add('open');
+  }
 })();
+
+function openOnboard(){
+  document.getElementById('onboard-overlay').classList.add('open');
+}
+function closeOnboard(){
+  if(document.getElementById('onboard-never').checked){
+    localStorage.setItem('sr_onboard_done','1');
+  }
+  document.getElementById('onboard-overlay').classList.remove('open');
+}
 </script>
+
+<!-- ═══ MANUEL D'UTILISATION ═══ -->
+<div class="modal-overlay" id="onboard-overlay" onclick="if(event.target===this)closeOnboard()">
+  <div class="onboard-box">
+    <div class="onboard-head">
+      <div class="onboard-logo">📬</div>
+      <h1 class="onboard-title">Sant Roch — Manuel d'utilisation</h1>
+      <p class="onboard-sub">Ton espace pour rédiger, versionner et organiser tous les emails du funnel.</p>
+      <button class="modal-close" onclick="closeOnboard()">×</button>
+    </div>
+    <div class="onboard-body">
+      <div class="onboard-grid">
+
+        <!-- Vue Tableau -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>📋</span> Vue Tableau</div>
+          <div class="ob-row"><span class="ob-key">Clic ligne</span>Ouvrir le panneau d'édition d'un email</div>
+          <div class="ob-row"><span class="ob-key">En-tête section</span>Replier / déplier la section</div>
+          <div class="ob-row"><span class="ob-key">＋ Ajouter</span>Créer un nouvel email dans la section</div>
+          <div class="ob-row"><span class="ob-key">⠿ glisser</span>Réordonner les lignes dans une section</div>
+          <div class="ob-row"><span class="ob-key">🗑 survol</span>Supprimer une ligne (et son nœud dans l'arbre)</div>
+        </div>
+
+        <!-- Vue Arbre -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>🌳</span> Vue Arbre (Funnel)</div>
+          <div class="ob-row"><span class="ob-key">Clic nœud email</span>Ouvrir le panneau d'édition</div>
+          <div class="ob-row"><span class="ob-key">Scroll</span>Zoomer / dézoomer</div>
+          <div class="ob-row"><span class="ob-key">Drag fond</span>Naviguer dans le canvas</div>
+          <div class="ob-row"><span class="ob-key">● ancre</span>Tirer une connexion entre deux nœuds</div>
+          <div class="ob-row"><span class="ob-key">Double-clic</span>Renommer un nœud</div>
+          <div class="ob-row"><span class="ob-key">Clic droit</span>Menu contextuel (modifier · dupliquer · supprimer)</div>
+          <div class="ob-row"><span class="ob-key">Ajuster</span>Recentrer l'arbre dans la fenêtre</div>
+        </div>
+
+        <!-- Panneau email -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>✏️</span> Panneau d'édition</div>
+          <div class="ob-row"><span class="ob-key">V1</span>Version actuelle sur Mariana Tek — importée automatiquement, ne pas modifier</div>
+          <div class="ob-row"><span class="ob-key">V2</span>Ta nouvelle version à rédiger — mise en forme B / I / U et listes</div>
+          <div class="ob-row"><span class="ob-key">≠ Diff</span>Affiche les différences entre V1 et V2 surlignées (ajouté en vert · supprimé en rouge)</div>
+          <div class="ob-row"><span class="ob-key">Voir sur MT</span>Ouvre le template directement dans Mariana Tek</div>
+          <div class="ob-row"><span class="ob-key">💾 Sauvegarder</span>Enregistre le contenu sur GitHub</div>
+        </div>
+
+        <!-- Onglets & navigation -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>🗂</span> Onglets & Navigation</div>
+          <div class="ob-row"><span class="ob-key">Parcours client</span>Le funnel complet du client — de l'inscription à la fidélisation</div>
+          <div class="ob-row"><span class="ob-key">Guest</span>Flux email pour l'invité et le membre qui invite</div>
+          <div class="ob-row"><span class="ob-key">Carte cadeau</span>Flux acheteur et bénéficiaire</div>
+          <div class="ob-row"><span class="ob-key">Backlog</span>Emails techniques + emails MT non encore activés</div>
+          <div class="ob-row"><span class="ob-key">Tableau ↔ Arbre</span>Basculer entre les deux vues (boutons en haut à droite)</div>
+          <div class="ob-row"><span class="ob-key">↩ ↪ Annuler</span>50 niveaux d'historique — Ctrl+Z / Ctrl+Shift+Z</div>
+        </div>
+
+        <!-- Sauvegarde -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>☁️</span> Sauvegarde & Sync</div>
+          <div class="ob-row"><span class="ob-key">Auto 2s</span>Sauvegarde automatique sur GitHub 2 secondes après toute modification</div>
+          <div class="ob-row"><span class="ob-key">💾 Manuel</span>Bouton "Sauvegarder" en haut pour forcer une sauvegarde immédiate</div>
+          <div class="ob-row"><span class="ob-key">Multi-machine</span>Les données sont synchronisées — tout changement est visible sur tous les appareils après rechargement</div>
+          <div class="ob-row"><span class="ob-key">↓ CSV / JSON</span>Exporter les données du tableau actif à tout moment</div>
+        </div>
+
+        <!-- Variables MT -->
+        <div class="ob-card">
+          <div class="ob-card-title"><span>🔧</span> Variables Mariana Tek</div>
+          <div class="ob-tip">Les <strong>{{variables}}</strong> dans V1 sont des shortcodes Mariana Tek — conserve-les dans V2 pour qu'ils soient remplacés automatiquement à l'envoi.</div>
+          <div class="ob-row"><span class="ob-key">{{user_first_name}}</span>Prénom du client</div>
+          <div class="ob-row"><span class="ob-key">{{class_name}}</span>Nom de la séance</div>
+          <div class="ob-row"><span class="ob-key">{{class_time}}</span>Heure de la séance</div>
+          <div class="ob-row"><span class="ob-key">{{class_full_date}}</span>Date complète</div>
+          <div class="ob-row"><span class="ob-key">{{class_instructors}}</span>Nom de l'instructeur</div>
+        </div>
+
+        <!-- Statuts & couleurs -->
+        <div class="ob-card ob-full">
+          <div class="ob-card-title"><span>🎨</span> Statuts des nœuds dans l'arbre</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1B4332"></span><strong>Email</strong> — email Mariana Tek mappé, V1 importée</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#92400E"></span><strong>À créer</strong> — email à rédiger, pas encore dans MT</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#1E3A5F"></span><strong>Décision</strong> — logique conditionnelle du funnel</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#6C1412"></span><strong>Étape clé</strong> — moment important du parcours</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#374151"></span><strong>Garder</strong> — email MT existant à conserver tel quel</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="onboard-foot">
+      <label class="onboard-check">
+        <input type="checkbox" id="onboard-never">
+        Ne plus afficher au démarrage
+      </label>
+      <button class="bsave" onclick="closeOnboard()" style="padding:8px 22px;font-size:13px">🚀 C'est parti</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
