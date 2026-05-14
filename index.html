@@ -422,7 +422,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
 
 <div id="main-layout" class="layout">
   <!-- TABLE VIEW -->
-  <div id="layout-table" style="display:flex;flex:1;overflow:hidden;min-width:0">
+  <div id="layout-table" style="display:none;flex:1;overflow:hidden;min-width:0">
     <div class="left" id="left"></div>
     <div id="table-resize-handle"></div>
     <div class="right" id="right">
@@ -488,7 +488,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
   </div>
 
   <!-- TREE VIEW -->
-  <div id="layout-tree">
+  <div id="layout-tree" style="display:flex">
     <div class="tree-toolbar">
       <span class="tlabel">Arbre :</span>
       <button class="tbtn primary" onclick="addNode()">＋ Nœud</button>
