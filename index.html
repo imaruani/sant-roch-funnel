@@ -2459,29 +2459,46 @@ async function saveToGitHub(){
   const btn=document.getElementById('btn-gh-save');
   if(btn){btn.disabled=true;btn.textContent='⏳ Sauvegarde...';}
   try{
+    // Si ghSha est null (fetch initial raté), on le récupère maintenant
+    if(!ghSha){
+      const freshMeta=await fetch(GH_API,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+      if(freshMeta.status===401||freshMeta.status===403){
+        throw new Error('Token GitHub expiré ou invalide ('+freshMeta.status+'). Contacte ilannamaruani pour renouveler le token.');
+      }
+      if(freshMeta.ok){
+        const fm=await freshMeta.json();
+        ghSha=fm.sha||null;
+      }
+    }
     const payload={TABS,TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[],_init:true}))};
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
     const body={message:'Save — '+new Date().toLocaleString('fr-FR'),content};
     if(ghSha) body.sha=ghSha;
     const res=await fetch(GH_API,{method:'PUT',headers:{'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+    if(res.status===401||res.status===403){
+      throw new Error('Token GitHub expiré ou invalide ('+res.status+'). Contacte ilannamaruani pour renouveler le token.');
+    }
     const data=await res.json();
     if(data.content){
       ghSha=data.content.sha;
       markSaved();
       // Cache local aussi (fallback offline)
       try{localStorage.setItem('sant-roch-v6-cache',JSON.stringify(payload));}catch(e){}
-    } else if(res.status===409){
-      // Conflit SHA — re-fetch et retry
+    } else if(res.status===409||res.status===422){
+      // Conflit SHA ou SHA manquant — re-fetch et retry
       const fresh=await fetch(GH_API,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(r=>r.json());
+      if(!fresh.sha) throw new Error('Impossible de récupérer le SHA du fichier GitHub.');
       ghSha=fresh.sha; body.sha=ghSha;
       const res2=await fetch(GH_API,{method:'PUT',headers:{'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
       const data2=await res2.json();
       if(data2.content){ghSha=data2.content.sha;markSaved();}
-      else throw new Error('Conflit non résolu');
+      else throw new Error('Conflit non résolu : '+(data2.message||JSON.stringify(data2)));
     } else {
       throw new Error(data.message||JSON.stringify(data));
     }
   }catch(e){
+    const ind=document.getElementById('autosave-ind');
+    if(ind){ind.textContent='❌ Échec sauvegarde';ind.style.color='#b91c1c';}
     alert('❌ Erreur sauvegarde GitHub :\n'+e.message);
   }finally{
     if(btn){btn.disabled=false;btn.textContent='💾 Sauvegarder';}
