@@ -960,8 +960,7 @@ const TREES=[
     {x:345,y:800,w:160,h:36,type:'key',t1:'Session',t2:'sauna + bain froid'},
     {x:310,y:865,w:250,h:36,type:'decision',t1:'Première visite ?',t2:''},
     {x:520,y:920,w:110,h:36,type:'email',t1:'First Check-In',t2:'First Class Check-In'},
-    {x:310,y:920,w:200,h:36,type:'todo',t1:'Post-session J+1',t2:'récupération · prochain créneau'},
-    // [22] — décision post-session
+    // [21] — décision post-session
     {x:230,y:1010,w:300,h:40,type:'decision',t1:'Quel est son statut ?',t2:'Inactif · Pack · Membre actif'},
     // ── Branche gauche : Inactif / réactivation ──
     {x:10, y:1090,w:210,h:36,type:'todo',    t1:'Réactivation J+30',       t2:'Message de retour doux'},
@@ -986,17 +985,17 @@ const TREES=[
     [13,14,'Oui'],[13,15,'Annule'],[14,16,null],[11,16,null],
     [16,17,null],[17,18,'Oui'],[17,19,'Non'],
     [19,20,null],[20,21,'Oui'],[20,22,'Non'],
-    [21,23,null],[22,23,null],
+    [21,22,null],
     // Inactif
-    [23,24,'Inactif — pas de séances'],[24,25,null],[25,26,null],
+    [22,23,'Inactif — pas de séances'],[23,24,null],[24,25,null],
     // Pack
-    [23,27,'A un pack'],
+    [22,26,'A un pack'],
     // Membre
-    [23,28,'Membre actif'],[28,29,null],[28,30,null],
+    [22,27,'Membre actif'],[27,28,null],[27,29,null],
     // Convergence Milestones
-    [27,31,null],[28,31,null],
-    [31,32,null],[31,33,null],
-    [32,34,null],[33,34,null]
+    [26,30,null],[27,30,null],
+    [30,31,null],[30,32,null],
+    [31,33,null],[32,33,null]
   ]},
   {nodes:[
     {x:200,y:20,w:260,h:40,type:'key',t1:'Membre invite un guest',t2:'sur sa session'},
