@@ -941,7 +941,8 @@ const TREES=[
     {x:220,y:20,w:220,h:40,type:'key',t1:'Inscription sur le site',t2:''},
     {x:200,y:90,w:260,h:36,type:'email',t1:'Email de bienvenue',t2:'New Registration'},
     {x:195,y:155,w:270,h:36,type:'decision',t1:'A-t-il acheté ?',t2:'dans les 7 jours suivants'},
-    {x:40,y:220,w:160,h:58,type:'todo',t1:'Relances',t2:'J+3 · J+7 sans achat'},
+    {x:40,y:220,w:160,h:36,type:'todo',t1:'Relance J+3',t2:'Pas encore réservé'},
+    {x:40,y:268,w:160,h:36,type:'todo',t1:'Relance J+7',t2:'Dernière relance'},
     {x:400,y:220,w:200,h:36,type:'decision',t1:'Quel achat ?',t2:'type de produit'},
     {x:280,y:290,w:120,h:36,type:'email',t1:'Confirmation abonnement',t2:'Purchase Confirmation'},
     {x:410,y:290,w:130,h:36,type:'email',t1:'Confirmation pack',t2:'Purchase Confirmation'},
@@ -978,24 +979,24 @@ const TREES=[
     {x:420,y:1370,w:220,h:40,type:'email',   t1:'Milestone 2 · XX visites',t2:'Récompense 2 · à définir avec la boss'},
     {x:300,y:1450,w:250,h:36,type:'todo',    t1:'Suite milestones',        t2:'Programme complet · à définir'},
   ],initEdges:[
-    [0,1,null],[1,2,null],[2,3,'Non'],[2,4,'Oui'],
-    [4,5,'Abo'],[4,6,'Pack'],[4,7,'Séance'],
-    [5,8,null],[6,8,null],[7,8,null],[8,9,null],
-    [9,10,'Oui'],[9,11,'Non'],[11,12,null],
-    [12,13,'Oui'],[12,14,'Annule'],[13,15,null],[10,15,null],
-    [15,16,null],[16,17,'Oui'],[16,18,'Non'],
-    [18,19,null],[19,20,'Oui'],[19,21,'Non'],
-    [20,22,null],[21,22,null],
+    [0,1,null],[1,2,null],[2,3,'Non'],[3,4,null],[2,5,'Oui'],
+    [5,6,'Abo'],[5,7,'Pack'],[5,8,'Séance'],
+    [6,9,null],[7,9,null],[8,9,null],[9,10,null],
+    [10,11,'Oui'],[10,12,'Non'],[12,13,null],
+    [13,14,'Oui'],[13,15,'Annule'],[14,16,null],[11,16,null],
+    [16,17,null],[17,18,'Oui'],[17,19,'Non'],
+    [19,20,null],[20,21,'Oui'],[20,22,'Non'],
+    [21,23,null],[22,23,null],
     // Inactif
-    [22,23,'Inactif — pas de séances'],[23,24,null],[24,25,null],
+    [23,24,'Inactif — pas de séances'],[24,25,null],[25,26,null],
     // Pack
-    [22,26,'A un pack'],
+    [23,27,'A un pack'],
     // Membre
-    [22,27,'Membre actif'],[27,28,null],[27,29,null],
+    [23,28,'Membre actif'],[28,29,null],[28,30,null],
     // Convergence Milestones
-    [26,30,null],[27,30,null],
-    [30,31,null],[30,32,null],
-    [31,33,null],[32,33,null]
+    [27,31,null],[28,31,null],
+    [31,32,null],[31,33,null],
+    [32,34,null],[33,34,null]
   ]},
   {nodes:[
     {x:200,y:20,w:260,h:40,type:'key',t1:'Membre invite un guest',t2:'sur sa session'},
@@ -2432,6 +2433,7 @@ async function applyGHData(raw){
       'First check-in':'First Check-In',
       'Bénéficiaire reçoit la carte':'Réception carte cadeau',
       'Customer Comm.':'Customer Communication',
+      'Relances':'Relance J+3',
     };
     if(d.TREES) d.TREES.forEach((t,i)=>{
       if(!TREES[i]||!t.nodes)return;
