@@ -764,6 +764,14 @@ const TABS=[
     {id:'f3',type:'email',t1:'Milestone 2 · XX visites',t2:'Récompense 2',             to:'Membre / Pack',   mt:'—',subject:'',content:'Récompense 2 · Contenu à définir',notes:'Seuil à définir — ex: 10 visites'},
     {id:'f4',type:'todo', t1:'Suite milestones',        t2:'Programme complet',        to:'Membre / Pack',   mt:'—',subject:'',content:'Programme complet · À définir avec la boss',notes:'Voir faisabilité technique dans Explore Growth / Marianatek'},
   ]},
+  {title:'Activation Marketing',tag:'Campagnes one-shot · envoi manuel ou planifié',rows:[
+    {id:'mkt1',type:'todo',t1:'Fête des mères',          t2:'One-shot',to:'Toute la base',mt:'—',subject:'',content:'',notes:'Cadeau idéal · Offre carte cadeau / pack · CTA : Offrir une expérience'},
+    {id:'mkt2',type:'todo',t1:'Fête des pères',          t2:'One-shot',to:'Toute la base',mt:'—',subject:'',content:'',notes:''},
+    {id:'mkt3',type:'todo',t1:'Anniversaire client',     t2:'J anniversaire',to:'Client',mt:'—',subject:'',content:'',notes:'À vérifier si MT permet le trigger anniversaire'},
+    {id:'mkt4',type:'todo',t1:'Offre saisonnière',       t2:'One-shot',to:'Toute la base',mt:'—',subject:'',content:'',notes:'Rentrée · Fin d\'année · Été · etc.'},
+    {id:'mkt5',type:'todo',t1:'Événement / Soirée',      t2:'One-shot',to:'Membres + prospects',mt:'—',subject:'',content:'',notes:'Soirée thématique · Événement privé membres'},
+    {id:'mkt6',type:'todo',t1:'Campagne réactivation',   t2:'One-shot',to:'Inactifs 90j+',mt:'—',subject:'',content:'',notes:'Différent de J+30/J+60 — campagne ponctuelle ciblée'},
+  ]},
 ]},
 {label:'Guest',sections:[
   {title:'FLUX GUEST',tag:'Ce que reçoit la personne invitée',split:'left',color:'#6C1412',rows:[
@@ -977,6 +985,14 @@ const TREES=[
     {x:180,y:1370,w:220,h:40,type:'email',   t1:'Milestone 1 · X visites', t2:'Récompense 1 · à définir avec la boss'},
     {x:420,y:1370,w:220,h:40,type:'email',   t1:'Milestone 2 · XX visites',t2:'Récompense 2 · à définir avec la boss'},
     {x:300,y:1450,w:250,h:36,type:'todo',    t1:'Suite milestones',        t2:'Programme complet · à définir'},
+    // ── Activation Marketing (île indépendante) ──
+    {x:820,y:20, w:260,h:44,type:'key', t1:'Activation Marketing',   t2:'Campagnes one-shot'},
+    {x:820,y:90, w:200,h:36,type:'todo',t1:'Fête des mères',         t2:'One-shot'},
+    {x:820,y:140,w:200,h:36,type:'todo',t1:'Fête des pères',         t2:'One-shot'},
+    {x:820,y:190,w:200,h:36,type:'todo',t1:'Anniversaire client',    t2:'J anniversaire'},
+    {x:820,y:240,w:200,h:36,type:'todo',t1:'Offre saisonnière',      t2:'One-shot'},
+    {x:820,y:290,w:200,h:36,type:'todo',t1:'Événement / Soirée',     t2:'One-shot'},
+    {x:820,y:340,w:200,h:36,type:'todo',t1:'Campagne réactivation',  t2:'One-shot · Inactifs 90j+'},
   ],initEdges:[
     [0,1,null],[1,2,null],[2,3,'Non'],[3,4,null],[2,5,'Oui'],
     [5,6,'Abo'],[5,7,'Pack'],[5,8,'Séance'],
@@ -995,7 +1011,9 @@ const TREES=[
     // Convergence Milestones
     [26,30,null],[27,30,null],
     [30,31,null],[30,32,null],
-    [31,33,null],[32,33,null]
+    [31,33,null],[32,33,null],
+    // Activation Marketing
+    [34,35,null],[34,36,null],[34,37,null],[34,38,null],[34,39,null],[34,40,null]
   ]},
   {nodes:[
     {x:200,y:20,w:260,h:40,type:'key',t1:'Membre invite un guest',t2:'sur sa session'},
