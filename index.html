@@ -1866,8 +1866,7 @@ function findRowForNode(n){
 
 function getEffectiveType(row){
   if(!row) return 'todo';
-  const has=!!(row.v1?.content||'').trim()||!!(row.v2?.content||'').trim();
-  return has?'email':'todo';
+  return row.type||'todo';
 }
 
 function showTep(n){
