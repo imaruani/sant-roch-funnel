@@ -298,6 +298,51 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
 .diff-legend{font-size:10px;color:var(--muted);margin-top:6px;display:flex;gap:10px;flex-shrink:0}
 .diff-legend span{display:flex;align-items:center;gap:3px}
 
+/* DEMO MODAL */
+#demo-overlay{z-index:810}
+.demo-box{background:#fff;border-radius:14px;width:700px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.22)}
+.demo-head{background:var(--bxm);padding:20px 28px 16px;color:#fff;flex-shrink:0;position:relative}
+.demo-head .modal-close{color:#fff;opacity:.65;position:absolute;top:14px;right:16px;font-size:22px}
+.demo-head .modal-close:hover{opacity:1}
+.demo-title{font-size:17px;font-weight:700;color:#fff;margin:0 0 4px}
+.demo-sub{font-size:12px;color:rgba(255,255,255,.72);margin:0}
+.demo-body{padding:0;overflow-y:auto;flex:1}
+.demo-section{padding:20px 24px;border-bottom:1px solid var(--border)}
+.demo-section:last-child{border-bottom:none}
+.demo-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--bxm);margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.demo-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.demo-badges{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.demo-badge{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px solid;flex:1;min-width:220px}
+.demo-badge.blue{background:#EFF6FF;border-color:#2563EB}
+.demo-badge.orange{background:#FFF7ED;border-color:#EA580C}
+.demo-badge-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.demo-badge.blue .demo-badge-dot{background:#DBEAFE;border:2px solid #2563EB}
+.demo-badge.orange .demo-badge-dot{background:#FFF;border:2px solid #EA580C}
+.demo-badge-text{font-size:12px;line-height:1.5}
+.demo-badge-label{font-weight:700;font-size:13px}
+.demo-badge.blue .demo-badge-label{color:#1E40AF}
+.demo-badge.orange .demo-badge-label{color:#9A3412}
+.demo-badge-sub{color:var(--muted);font-size:11.5px}
+.demo-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.demo-col{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.demo-col-head{padding:7px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:6px}
+.demo-col-head.v1{background:#F0F9FF;color:#0369A1;border-bottom:1px solid #BAE6FD}
+.demo-col-head.v2{background:#F0FDF4;color:#166534;border-bottom:1px solid #BBF7D0}
+.demo-col-body{padding:10px 12px;font-size:11.5px;color:var(--text);line-height:1.7;background:#FAFAF9;min-height:70px}
+.demo-col-body .var{color:#7C3AED;font-weight:600}
+.demo-col-body .changed{background:#FEF3C7;border-radius:2px;padding:0 2px}
+.demo-arrow-row{display:flex;align-items:center;justify-content:center;gap:12px;font-size:12px;color:var(--muted);margin:4px 0 10px}
+.demo-diff-box{border:1px solid #D1FAE5;border-radius:8px;background:#F0FDF4;padding:12px 14px;font-size:12px;line-height:1.8;color:var(--text)}
+.demo-diff-box .dd{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-radius:2px;padding:0 2px;margin:0 1px}
+.demo-diff-box .da{background:#D1FAE5;color:#166534;border-radius:2px;padding:0 2px;margin:0 1px}
+.demo-diff-leg{display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--muted)}
+.demo-diff-leg span{display:flex;align-items:center;gap:4px}
+.demo-tip{background:var(--amberl);border:1px solid #F59E0B;border-radius:7px;padding:10px 14px;font-size:12px;color:#78350F;line-height:1.6;margin-top:10px}
+.demo-tip strong{color:#92400E}
+.demo-flow{display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;margin-top:8px}
+.demo-flow-step{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11.5px;color:var(--text);white-space:nowrap}
+.demo-flow-arr{color:var(--muted);font-size:14px}
+
 /* ONBOARDING MODAL */
 #onboard-overlay{z-index:800}
 .onboard-box{background:#fff;border-radius:14px;width:740px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.22)}
@@ -354,6 +399,7 @@ del.d-del{background:#FEE2E2;color:#991B1B;text-decoration:line-through;border-r
     <button class="hbtn hg" id="btn-gh-save" onclick="saveToGitHub()">💾 Sauvegarder</button>
     <button class="hbtn hg" onclick="exportCSV()">↓ CSV</button>
     <button class="hbtn hg" onclick="exportJSON()">↓ JSON</button>
+    <button class="hbtn hg" onclick="openDemo()" title="Démo V1/V2/Diff" style="font-size:11px;padding:4px 10px">🎓 Démo V1/V2</button>
     <button class="hbtn hg" onclick="openOnboard()" title="Manuel d'utilisation" style="font-size:14px;padding:4px 10px">?</button>
   </div>
 </header>
@@ -2549,6 +2595,8 @@ async function saveToGitHub(){
 function openOnboard(){
   document.getElementById('onboard-overlay').classList.add('open');
 }
+function openDemo(){document.getElementById('demo-overlay').classList.add('open');}
+function closeDemo(){document.getElementById('demo-overlay').classList.remove('open');}
 function closeOnboard(){
   if(document.getElementById('onboard-never').checked){
     localStorage.setItem('sr_onboard_done','1');
@@ -2622,6 +2670,104 @@ function closeOnboard(){
         Ne plus afficher au démarrage
       </label>
       <button class="bsave" onclick="closeOnboard()" style="padding:8px 22px;font-size:13px">🚀 C'est parti</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DEMO MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="demo-overlay" onclick="if(event.target===this)closeDemo()">
+  <div class="demo-box">
+    <div class="demo-head">
+      <div class="demo-title">🎓 V1 · V2 · Diff — Comment ça marche</div>
+      <div class="demo-sub">Comprendre les codes couleur, la logique V1/V2 et la comparaison Diff</div>
+      <button class="modal-close" onclick="closeDemo()">×</button>
+    </div>
+    <div class="demo-body">
+
+      <!-- 1. CODES COULEUR -->
+      <div class="demo-section">
+        <div class="demo-section-title">① Les deux types de nœuds</div>
+        <div class="demo-badges">
+          <div class="demo-badge blue">
+            <div class="demo-badge-dot"></div>
+            <div class="demo-badge-text">
+              <div class="demo-badge-label">🔵 À personnaliser</div>
+              <div class="demo-badge-sub">L'email <strong>existe déjà dans Marianatek</strong>.<br>V1 est pré-rempli avec le texte MT actuel.<br>Tu rédiges ta version dans V2.</div>
+            </div>
+          </div>
+          <div class="demo-badge orange">
+            <div class="demo-badge-dot"></div>
+            <div class="demo-badge-text">
+              <div class="demo-badge-label">🟠 À créer</div>
+              <div class="demo-badge-sub">L'email <strong>n'existe pas encore dans MT</strong>.<br>Pas de V1 importé.<br>Tu rédiges directement ta version.</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-tip">
+          💡 <strong>Exemples bleus :</strong> Confirmation réservation, Rappel J-1, Liste d'attente… ces emails partent déjà, tu les améliores.<br>
+          💡 <strong>Exemples oranges :</strong> Relance J+3, Réactivation J+30, Fête des mères… à créer de zéro dans Explore Growth.
+        </div>
+      </div>
+
+      <!-- 2. V1 vs V2 -->
+      <div class="demo-section">
+        <div class="demo-section-title">② V1 et V2 côte à côte</div>
+        <div class="demo-cols">
+          <div class="demo-col">
+            <div class="demo-col-head v1">📥 V1 — Version Marianatek <span style="font-weight:400;opacity:.7">(lecture seule)</span></div>
+            <div class="demo-col-body">
+              Bonjour <span class="var">{{user_first_name}}</span>,<br><br>
+              Votre réservation est confirmée pour le <span class="var">{{class_time}}</span>.<br><br>
+              À bientôt,<br>
+              L'équipe
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-col-head v2">✏️ V2 — Ta version Sant Roch</div>
+            <div class="demo-col-body">
+              Bonjour <span class="var">{{user_first_name}}</span>,<br><br>
+              Ta session est <span class="changed">confirmée pour le <span class="var">{{class_time}}</span></span>. On a hâte de t'accueillir !<br><br>
+              À très vite,<br>
+              L'équipe <strong>Sant Roch</strong> 🌿
+            </div>
+          </div>
+        </div>
+        <div class="demo-arrow-row">
+          <div class="demo-flow-step">Clic sur un nœud bleu dans l'arbre</div>
+          <div class="demo-flow-arr">→</div>
+          <div class="demo-flow-step">Panneau s'ouvre avec V1 à gauche</div>
+          <div class="demo-flow-arr">→</div>
+          <div class="demo-flow-step">Tu rédiges dans V2 à droite</div>
+        </div>
+        <div class="demo-tip">
+          ⚠️ <strong>Ne jamais modifier V1</strong> — c'est la version de référence MT. Garde les <code style="background:#EDE9FE;border-radius:3px;padding:0 4px;color:#7C3AED;font-size:11px">{{variables}}</code> dans V2 pour que la personnalisation continue de fonctionner.
+        </div>
+      </div>
+
+      <!-- 3. DIFF -->
+      <div class="demo-section">
+        <div class="demo-section-title">③ Le Diff — comparer V1 et V2</div>
+        <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.6">Clique sur le bouton <strong style="color:var(--text)">≠ Diff</strong> dans la barre du panneau pour voir exactement ce qui change entre V1 et V2, mot par mot.</p>
+        <div class="demo-diff-box">
+          Bonjour <span class="var" style="color:#7C3AED">{{user_first_name}}</span>,<br><br>
+          <span class="dd">Votre réservation est confirmée</span> <span class="da">Ta session est confirmée</span> pour le <span class="var" style="color:#7C3AED">{{class_time}}</span>. <span class="da">On a hâte de t'accueillir !</span><br><br>
+          <span class="dd">À bientôt,</span> <span class="da">À très vite,</span><br>
+          <span class="dd">L'équipe</span> <span class="da">L'équipe Sant Roch 🌿</span>
+        </div>
+        <div class="demo-diff-leg">
+          <span><span style="background:#D1FAE5;color:#166534;border-radius:2px;padding:0 5px;font-weight:600">vert</span> = ajouté dans V2</span>
+          <span><span style="background:#FEE2E2;color:#991B1B;border-radius:2px;padding:0 5px;font-weight:600;text-decoration:line-through">rouge</span> = supprimé de V1</span>
+          <span style="color:#888">texte normal = inchangé</span>
+        </div>
+        <div class="demo-tip" style="margin-top:12px">
+          💡 <strong>Pratique pour :</strong> vérifier que tu n'as pas oublié de variables MT, voir l'ampleur des changements, et valider avant d'implémenter dans Marianatek.
+        </div>
+      </div>
+
+    </div>
+    <div class="onboard-foot">
+      <span style="font-size:12px;color:var(--muted)">Accessible à tout moment via le bouton <strong>?</strong> → Démo V1/V2</span>
+      <button class="bsave" onclick="closeDemo()" style="padding:8px 22px;font-size:13px">OK, j'ai compris ✓</button>
     </div>
   </div>
 </div>
