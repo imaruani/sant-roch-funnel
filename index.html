@@ -759,12 +759,24 @@ function _updateUndoUI(){
   if(br){br.disabled=!_redoStack.length;}
 }
 
-/* ─── Auto-save (debounce 2s) ─── */
+/* ─── Auto-save robuste ─── */
+let _saveInProgress=false;  // verrou anti-concurrent
+let _pendingSave=false;      // sauvegarde en attente pendant qu'une tourne
+
+// Sauvegarde locale IMMÉDIATE (toujours, avant même GitHub)
+function _saveLocal(){
+  try{
+    const payload={TABS,TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[],_init:true}))};
+    localStorage.setItem('sant-roch-v6-cache',JSON.stringify(payload));
+  }catch(e){}
+}
+
 function scheduleGHSave(){
   const ind=document.getElementById('autosave-ind');
-  if(ind){ind.textContent='● Modification en attente…';ind.style.color='#B45309';}
+  if(ind){ind.textContent='● Non sauvegardé';ind.style.color='#B45309';}
+  _saveLocal(); // backup local immédiat
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(saveToGitHub,2000);
+  _saveTimer=setTimeout(saveToGitHub,1500);
 }
 
 /* ═══════════════════════════════════════
@@ -2520,52 +2532,68 @@ async function applyGHData(raw){
 }
 
 async function saveToGitHub(){
+  // Verrou : si une save tourne déjà, on marque "en attente" et on sort
+  if(_saveInProgress){ _pendingSave=true; return; }
+  _saveInProgress=true;
+  _pendingSave=false;
+
   const btn=document.getElementById('btn-gh-save');
+  const ind=document.getElementById('autosave-ind');
   if(btn){btn.disabled=true;btn.textContent='⏳ Sauvegarde...';}
+  if(ind){ind.textContent='⏳ Sauvegarde…';ind.style.color='#6B7280';}
+
+  const GH_HEADERS={'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
+
   try{
-    // Si ghSha est null (fetch initial raté), on le récupère maintenant
-    if(!ghSha){
-      const freshMeta=await fetch(GH_API,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
-      if(freshMeta.status===401||freshMeta.status===403){
-        throw new Error('Token GitHub expiré ou invalide ('+freshMeta.status+'). Contacte ilannamaruani pour renouveler le token.');
-      }
-      if(freshMeta.ok){
-        const fm=await freshMeta.json();
-        ghSha=fm.sha||null;
-      }
+    // ① Toujours re-fetch le SHA courant (évite les 409 si une autre session a sauvé)
+    const metaRes=await fetch(GH_API,{headers:GH_HEADERS});
+    if(metaRes.status===401||metaRes.status===403){
+      throw new Error('Token GitHub expiré ('+metaRes.status+'). Renouveler le token.');
     }
+    if(metaRes.ok){
+      const meta=await metaRes.json();
+      if(meta.sha) ghSha=meta.sha;
+    }
+
+    // ② Prépare le payload
     const payload={TABS,TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[],_init:true}))};
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
     const body={message:'Save — '+new Date().toLocaleString('fr-FR'),content};
     if(ghSha) body.sha=ghSha;
-    const res=await fetch(GH_API,{method:'PUT',headers:{'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
-    if(res.status===401||res.status===403){
-      throw new Error('Token GitHub expiré ou invalide ('+res.status+'). Contacte ilannamaruani pour renouveler le token.');
-    }
+
+    // ③ PUT
+    const res=await fetch(GH_API,{method:'PUT',headers:GH_HEADERS,body:JSON.stringify(body)});
     const data=await res.json();
+
     if(data.content){
       ghSha=data.content.sha;
+      _saveLocal(); // sync locale
       markSaved();
-      // Cache local aussi (fallback offline)
-      try{localStorage.setItem('sant-roch-v6-cache',JSON.stringify(payload));}catch(e){}
     } else if(res.status===409||res.status===422){
-      // Conflit SHA ou SHA manquant — re-fetch et retry
-      const fresh=await fetch(GH_API,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(r=>r.json());
-      if(!fresh.sha) throw new Error('Impossible de récupérer le SHA du fichier GitHub.');
+      // SHA encore en conflit → re-fetch une fois de plus et retry
+      const fresh=await fetch(GH_API,{headers:GH_HEADERS}).then(r=>r.json());
+      if(!fresh.sha) throw new Error('Impossible de récupérer le SHA GitHub.');
       ghSha=fresh.sha; body.sha=ghSha;
-      const res2=await fetch(GH_API,{method:'PUT',headers:{'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+      const res2=await fetch(GH_API,{method:'PUT',headers:GH_HEADERS,body:JSON.stringify(body)});
       const data2=await res2.json();
-      if(data2.content){ghSha=data2.content.sha;markSaved();}
-      else throw new Error('Conflit non résolu : '+(data2.message||JSON.stringify(data2)));
+      if(data2.content){ghSha=data2.content.sha;_saveLocal();markSaved();}
+      else throw new Error('Conflit persistant : '+(data2.message||JSON.stringify(data2)));
     } else {
       throw new Error(data.message||JSON.stringify(data));
     }
   }catch(e){
-    const ind=document.getElementById('autosave-ind');
-    if(ind){ind.textContent='❌ Échec sauvegarde';ind.style.color='#b91c1c';}
-    alert('❌ Erreur sauvegarde GitHub :\n'+e.message);
+    if(ind){ind.textContent='❌ Échec';ind.style.color='#b91c1c';}
+    // Pas d'alert bloquante pour les auto-saves silencieux — juste l'indicateur
+    // Sauf si c'est le bouton manuel
+    if(btn&&!btn.dataset.auto){
+      alert('❌ Erreur sauvegarde GitHub :\n'+e.message+'\n\nTes modifications sont sauvées localement (localStorage).');
+    }
+    console.error('saveToGitHub error:',e);
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='💾 Sauvegarder';}
+    _saveInProgress=false;
+    if(btn){btn.disabled=false;btn.textContent='💾 Sauvegarder';delete btn.dataset.auto;}
+    // Si une save était en attente pendant qu'on tournait, la lancer maintenant
+    if(_pendingSave){ _pendingSave=false; setTimeout(saveToGitHub,500); }
   }
 }
 
