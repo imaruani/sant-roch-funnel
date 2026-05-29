@@ -791,9 +791,9 @@ const TABS=[
     {id:'a4',type:'todo',t1:'Abandon panier',t2:'H+2',to:'Client',mt:'—',subject:'',content:'Court · Direct · Lien retour panier · Pas de promo',notes:'Probablement pas possible avec Explore Growth — à vérifier'},
   ]},
   {title:'Confirmation achat',tag:'Selon le type d\'offre',rows:[
-    {id:'b1',type:'email',t1:'Confirmation abonnement',t2:'',to:'Nouveau membre',mt:'Purchase Confirmation',subject:'',content:'Récap · Avantages membre · Ce que comprend l\'abonnement · Lien réservation · Communauté',notes:'Idéalement un mail par type d\'abonnement — à vérifier dans MT'},
-    {id:'b2',type:'email',t1:'Confirmation pack',t2:'',to:'Acheteur pack',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Comment inviter un guest',notes:''},
-    {id:'b3',type:'email',t1:'Confirmation séance à l\'unité',t2:'',to:'Acheteur séance',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Contre-indications',notes:''},
+    {id:'b1',type:'todo',t1:'Confirmation abonnement',t2:'',to:'Nouveau membre',mt:'Purchase Confirmation',subject:'',content:'Récap · Avantages membre · Ce que comprend l\'abonnement · Lien réservation · Communauté',notes:'Idéalement un mail par type d\'abonnement — à vérifier dans MT'},
+    {id:'b2',type:'todo',t1:'Confirmation pack',t2:'',to:'Acheteur pack',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Comment inviter un guest',notes:''},
+    {id:'b3',type:'todo',t1:'Confirmation séance à l\'unité',t2:'',to:'Acheteur séance',mt:'Purchase Confirmation',subject:'',content:'Récap · Lien pour réserver son créneau · Contre-indications',notes:''},
   ]},
   {title:'Pré-session',tag:'De la réservation à la session',rows:[
     {id:'c1',type:'email',t1:'Confirmation réservation',t2:'',to:'Client',mt:'Appointment Confirmation - Customer',subject:'',content:'Heure · Adresse · Ce qu\'il faut apporter (maillot, serviette) · Politique annulation',notes:''},
@@ -1010,9 +1010,9 @@ const TREES=[
     {x:40,y:220,w:160,h:36,type:'todo',t1:'Relance J+3',t2:'Pas encore réservé'},
     {x:40,y:268,w:160,h:36,type:'todo',t1:'Relance J+7',t2:'Dernière relance'},
     {x:400,y:220,w:200,h:36,type:'decision',t1:'Quel achat ?',t2:'type de produit'},
-    {x:280,y:290,w:120,h:36,type:'email',t1:'Confirmation abonnement',t2:'Purchase Confirmation'},
-    {x:410,y:290,w:130,h:36,type:'email',t1:'Confirmation pack',t2:'Purchase Confirmation'},
-    {x:550,y:290,w:100,h:36,type:'email',t1:'Confirmation séance à l\'unité',t2:'Purchase Confirmation'},
+    {x:280,y:290,w:120,h:36,type:'todo',t1:'Confirmation abonnement',t2:'Purchase Confirmation'},
+    {x:410,y:290,w:130,h:36,type:'todo',t1:'Confirmation pack',t2:'Purchase Confirmation'},
+    {x:550,y:290,w:100,h:36,type:'todo',t1:'Confirmation séance à l\'unité',t2:'Purchase Confirmation'},
     {x:345,y:400,w:250,h:36,type:'decision',t1:'Il réserve une session',t2:'via le lien dans l\'email'},
     {x:345,y:465,w:250,h:36,type:'decision',t1:'Session disponible ?',t2:'place libre ou liste d\'attente'},
     {x:345,y:530,w:250,h:36,type:'email',t1:'Confirmation réservation',t2:'Appointment Confirmation - Customer'},
@@ -2544,42 +2544,44 @@ async function saveToGitHub(){
 
   const GH_HEADERS={'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};
 
-  try{
-    // ① Toujours re-fetch le SHA courant (évite les 409 si une autre session a sauvé)
-    const metaRes=await fetch(GH_API,{headers:GH_HEADERS});
-    if(metaRes.status===401||metaRes.status===403){
-      throw new Error('Token GitHub expiré ('+metaRes.status+'). Renouveler le token.');
-    }
-    if(metaRes.ok){
-      const meta=await metaRes.json();
-      if(meta.sha) ghSha=meta.sha;
-    }
-
-    // ② Prépare le payload
+  // Fonction interne : tente un PUT, retourne {ok, sha} ou throw
+  async function _tryPut(sha){
     const payload={TABS,TREES:TREES.map(t=>({nodes:t.nodes,edges:t.edges||[],_init:true}))};
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
     const body={message:'Save — '+new Date().toLocaleString('fr-FR'),content};
-    if(ghSha) body.sha=ghSha;
+    if(sha) body.sha=sha;
+    const r=await fetch(GH_API,{method:'PUT',headers:GH_HEADERS,body:JSON.stringify(body)});
+    const d=await r.json();
+    return {status:r.status,data:d,payload};
+  }
 
-    // ③ PUT
-    const res=await fetch(GH_API,{method:'PUT',headers:GH_HEADERS,body:JSON.stringify(body)});
-    const data=await res.json();
+  try{
+    // Si pas de SHA connu, on le fetch d'abord (démarrage ou token rechargé)
+    if(!ghSha){
+      const metaRes=await fetch(GH_API,{headers:GH_HEADERS});
+      if(metaRes.status===401||metaRes.status===403) throw new Error('Token GitHub expiré ('+metaRes.status+').');
+      if(metaRes.ok){ const m=await metaRes.json(); if(m.sha) ghSha=m.sha; }
+    }
+
+    // ① Tentative directe avec le SHA en mémoire (rapide — 1 seule requête)
+    const {status,data,payload}=await _tryPut(ghSha);
 
     if(data.content){
       ghSha=data.content.sha;
-      _saveLocal(); // sync locale
+      _saveLocal();
       markSaved();
-    } else if(res.status===409||res.status===422){
-      // SHA encore en conflit → re-fetch une fois de plus et retry
+    } else if(status===409||status===422||status===404){
+      // SHA périmé (ex: autre onglet a sauvé) → re-fetch SHA et retry
       const fresh=await fetch(GH_API,{headers:GH_HEADERS}).then(r=>r.json());
       if(!fresh.sha) throw new Error('Impossible de récupérer le SHA GitHub.');
-      ghSha=fresh.sha; body.sha=ghSha;
-      const res2=await fetch(GH_API,{method:'PUT',headers:GH_HEADERS,body:JSON.stringify(body)});
-      const data2=await res2.json();
-      if(data2.content){ghSha=data2.content.sha;_saveLocal();markSaved();}
-      else throw new Error('Conflit persistant : '+(data2.message||JSON.stringify(data2)));
+      ghSha=fresh.sha;
+      const {status:s2,data:d2}=await _tryPut(ghSha);
+      if(d2.content){ghSha=d2.content.sha;_saveLocal();markSaved();}
+      else throw new Error('Conflit persistant ('+s2+'): '+(d2.message||JSON.stringify(d2)));
+    } else if(status===401||status===403){
+      throw new Error('Token GitHub expiré ('+status+').');
     } else {
-      throw new Error(data.message||JSON.stringify(data));
+      throw new Error(data.message||'Erreur '+status);
     }
   }catch(e){
     if(ind){ind.textContent='❌ Échec';ind.style.color='#b91c1c';}
