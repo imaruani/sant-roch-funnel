@@ -818,7 +818,7 @@ const TABS=[
   ]},
   {title:'Milestones & gamification',tag:'Programme de fidélité par visites',rows:[
     {id:'f1',type:'key', t1:'Milestones visites',      t2:'Programme de fidélité',    to:'Membre / Pack',   mt:'—',subject:'',content:'Programme de récompenses basé sur le nombre de visites cumulées · À définir avec la boss',notes:'Décider des seuils et récompenses'},
-    {id:'f2',type:'email',t1:'Milestone 1 · X visites', t2:'Récompense 1',             to:'Membre / Pack',   mt:'—',subject:'',content:'Récompense 1 · Contenu à définir',notes:'Seuil à définir — ex: 5 visites'},
+    {id:'f2',type:'email',t1:'Milestone 5 visites',     t2:'Avis Google · fidélité',   to:'Membre / Pack',   mt:'—',subject:'Déjà 5 visites chez Sant Roch 🌿',content:'Bonjour,\n\nVous êtes déjà venu plusieurs fois chez Sant Roch.\n\nMerci pour votre confiance.\n\nSi l\'expérience vous a marqué - ne serait-ce qu\'un peu - nous serions très reconnaissants que vous preniez 30 secondes pour laisser un avis.\n\nCela nous aide concrètement à faire grandir le lieu et à continuer à élever le niveau d\'exigence.',notes:'Déclencher à 5 visites cumulées — vérifier trigger dans Explore Growth / Marianatek'},
     {id:'f3',type:'email',t1:'Milestone 2 · XX visites',t2:'Récompense 2',             to:'Membre / Pack',   mt:'—',subject:'',content:'Récompense 2 · Contenu à définir',notes:'Seuil à définir — ex: 10 visites'},
     {id:'f4',type:'todo', t1:'Suite milestones',        t2:'Programme complet',        to:'Membre / Pack',   mt:'—',subject:'',content:'Programme complet · À définir avec la boss',notes:'Voir faisabilité technique dans Explore Growth / Marianatek'},
   ]},
@@ -1040,7 +1040,7 @@ const TREES=[
     {x:510,y:1220,w:230,h:36,type:'email',   t1:'Résiliation abonnement',  t2:'Email rétention · offre de pause ?'},
     // ── Convergence Pack + Membre : Milestones ──
     {x:310,y:1290,w:260,h:40,type:'key',     t1:'Milestones visites',      t2:'Programme de fidélité · gamification'},
-    {x:180,y:1370,w:220,h:40,type:'email',   t1:'Milestone 1 · X visites', t2:'Récompense 1 · à définir avec la boss'},
+    {x:180,y:1370,w:220,h:40,type:'email',   t1:'Milestone 5 visites',     t2:'Avis Google · fidélité'},
     {x:420,y:1370,w:220,h:40,type:'email',   t1:'Milestone 2 · XX visites',t2:'Récompense 2 · à définir avec la boss'},
     {x:300,y:1450,w:250,h:36,type:'todo',    t1:'Suite milestones',        t2:'Programme complet · à définir'},
     // ── Activation Marketing (île indépendante) ──
@@ -2508,6 +2508,7 @@ async function applyGHData(raw){
       'Bénéficiaire reçoit la carte':'Réception carte cadeau',
       'Customer Comm.':'Customer Communication',
       'Relances':'Relance J+3',
+      'Milestone 1 · X visites':'Milestone 5 visites',
     };
     if(d.TREES) d.TREES.forEach((t,i)=>{
       if(!TREES[i]||!t.nodes)return;
